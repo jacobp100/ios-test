@@ -35,70 +35,56 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
-                                <rect key="frame" x="20" y="95" width="30" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
+                                <rect key="frame" x="20" y="95" width="560" height="30"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Play"/>
                                 <connections>
                                     <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2kH-xl-uCv"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cE3-FY-Cqr">
-                                <rect key="frame" x="20" y="133" width="30" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="-"/>
-                                <connections>
-                                    <action selector="tempoDecreaseButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UHd-ZV-J3E"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cbV-yx-o5V">
-                                <rect key="frame" x="119" y="133" width="30" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="+"/>
-                                <connections>
-                                    <action selector="temoIncreaseButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rjm-l9-nUR"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Tempo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Xs-Dn-hxN">
-                                <rect key="frame" x="58" y="137" width="53" height="21"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1hy-fw-NyB">
-                                <rect key="frame" x="20" y="171" width="30" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="-"/>
-                                <connections>
-                                    <action selector="pitchDecreaseButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JUR-gE-II7"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N6h-kP-QXx">
-                                <rect key="frame" x="119" y="171" width="30" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="+"/>
-                                <connections>
-                                    <action selector="pitchIncreaseButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="P2P-bX-2hZ"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Pitch" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qgu-SD-xgG">
-                                <rect key="frame" x="65" y="175" width="39" height="21"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="133" width="276" height="447"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="304" y="133" width="276" height="447"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="0fI-ok-kqL"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Wmn-s4-FvS"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="bFC-Qs-o1k"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="hfp-x0-WY1"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="i61-ix-Ccy"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" id="sgB-6h-tuX"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="8" id="1Ut-qx-ONR"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="8" id="42a-Dn-HEK"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qki-nF-ZFM" secondAttribute="trailing" id="6FI-Ys-Q4t"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="D7h-iU-1YW"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" id="E4T-Fm-FUg"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" id="Mlx-UK-Oes"/>
+                            <constraint firstItem="LxH-SX-3YL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Ugf-9p-Ouo"/>
+                            <constraint firstItem="LxH-SX-3YL" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="XVX-Mb-2Ao"/>
+                            <constraint firstItem="LxH-SX-3YL" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="YOh-X9-pVp"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="height" secondItem="1zY-mU-nTF" secondAttribute="height" id="bjp-9v-tGH"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" id="dAe-7f-Nmi"/>
+                            <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" id="kzu-31-qhD"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1zY-mU-nTF" secondAttribute="bottom" constant="20" id="srp-sf-n5y"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
                         </constraints>
                     </view>
                     <connections>

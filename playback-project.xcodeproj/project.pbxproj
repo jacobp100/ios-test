@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		161B26A71CE8BF9500EAD5FC /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161B26A61CE8BF9400EAD5FC /* SliderView.swift */; };
 		1628F7DE1CE882FD00637A83 /* starwars.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1628F7DD1CE882FD00637A83 /* starwars.mp3 */; };
 		1628F7E01CE887C400637A83 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1628F7DF1CE887C400637A83 /* AVFoundation.framework */; };
 		162FF25F1CE75B9D00939860 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162FF25E1CE75B9D00939860 /* AppDelegate.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		161B26A61CE8BF9400EAD5FC /* SliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		1628F7DD1CE882FD00637A83 /* starwars.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = starwars.mp3; sourceTree = "<group>"; };
 		1628F7DF1CE887C400637A83 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		162FF25B1CE75B9D00939860 /* playback-project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "playback-project.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +117,7 @@
 				162FF25E1CE75B9D00939860 /* AppDelegate.swift */,
 				162FF2601CE75B9D00939860 /* ViewController.swift */,
 				162FF2621CE75B9D00939860 /* Main.storyboard */,
+				161B26A61CE8BF9400EAD5FC /* SliderView.swift */,
 				162FF2651CE75B9D00939860 /* Assets.xcassets */,
 				162FF2671CE75B9D00939860 /* LaunchScreen.storyboard */,
 				162FF26A1CE75B9D00939860 /* Info.plist */,
@@ -272,6 +275,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				161B26A71CE8BF9500EAD5FC /* SliderView.swift in Sources */,
 				162FF2611CE75B9D00939860 /* ViewController.swift in Sources */,
 				162FF25F1CE75B9D00939860 /* AppDelegate.swift in Sources */,
 			);

@@ -72,22 +72,6 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         play()
     }
 
-    @IBAction func pitchIncreaseButtonPressed(sender: AnyObject) {
-        pitch += 1
-    }
-
-    @IBAction func pitchDecreaseButtonPressed(sender: AnyObject) {
-        pitch -= 1
-    }
-
-    @IBAction func temoIncreaseButtonPressed(sender: AnyObject) {
-        tempo += 3
-    }
-
-    @IBAction func tempoDecreaseButtonPressed(sender: AnyObject) {
-        tempo -= 3
-    }
-
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         songLabel.text = mediaItemCollection.items[0].title
     }
