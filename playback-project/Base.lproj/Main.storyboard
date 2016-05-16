@@ -28,15 +28,15 @@
                                     <action selector="addSongButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5ow-rc-0j6"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nsO-Eg-AVp">
-                                <rect key="frame" x="20" y="66" width="560" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Star Wars" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nsO-Eg-AVp">
+                                <rect key="frame" x="20" y="66" width="560" height="58"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="48"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
-                                <rect key="frame" x="20" y="95" width="560" height="30"/>
+                                <rect key="frame" x="20" y="131.5" width="560" height="30"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Play"/>
                                 <connections>
@@ -44,30 +44,63 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="133" width="276" height="447"/>
+                                <rect key="frame" x="20" y="169.5" width="264" height="410.5"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
                                         <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="minimum">
+                                        <integer key="value" value="-12"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="maximum">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="value">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="text" value="+0"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Pitch"/>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
+                                </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="304" y="133" width="276" height="447"/>
+                                <rect key="frame" x="316" y="169.5" width="264" height="410.5"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
                                         <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="minimum">
+                                        <integer key="value" value="50"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="maximum">
+                                        <integer key="value" value="200"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="value">
+                                        <integer key="value" value="100"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="text" value="100%"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="step">
+                                        <integer key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Tempo"/>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="tempoSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gyh-qV-GQF"/>
+                                </connections>
                             </view>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
+                                <rect key="frame" x="79" y="121" width="118" height="31"/>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="8" id="1Ut-qx-ONR"/>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="8" id="42a-Dn-HEK"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="32" id="42a-Dn-HEK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qki-nF-ZFM" secondAttribute="trailing" id="6FI-Ys-Q4t"/>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="D7h-iU-1YW"/>
                             <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
@@ -86,9 +119,16 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="zLE-MP-HDJ"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
+                        <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
                         <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
+                        <outlet property="tempoSlider" destination="qki-nF-ZFM" id="MQ4-kg-5YT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

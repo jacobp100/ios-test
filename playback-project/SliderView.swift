@@ -7,40 +7,64 @@
 //
 
 import UIKit
+import Foundation
 
-class SliderView: UIView {
+class SliderView: UIControl {
 
     @IBInspectable
     var color: UIColor = UIColor.blueColor() {
         didSet {
+            titleLabel?.textColor = color
             valueLabel?.textColor = color
         }
     }
     @IBInspectable
     var lineWidth: CGFloat = 1.0
+    @IBInspectable
+    var value: Int = 50
+    @IBInspectable
+    var minimum: Int = 0
+    @IBInspectable
+    var maximum: Int = 100
+    @IBInspectable
+    var step: Int = 1
+    @IBInspectable
+    var stepsForHeight: Int = 5
+    @IBInspectable
+    var title: String = "" { didSet { titleLabel?.text = title.uppercaseString } }
+    @IBInspectable
+    var text: String = "" { didSet { valueLabel?.text = text } }
+
+    private var defaultValue: Int!
 
     private let goldenRatio = (1 + sqrt(5.0)) / 2
     private let halfGoldenAngleDistanceFromHorizontal = (M_PI - (M_PI * (3.0 - sqrt(5)))) / 2
 
-    private var value: Int = 100 {
-        didSet {
-            valueLabel?.text = String(value)
-        }
-    }
-
     private var defaultButton: UIButton?
     private var incrementButton: UIButton?
     private var decrementButton: UIButton?
+    private var titleLabel: UILabel?
     private var valueLabel: UILabel?
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
+        let panGestureRecognizer = UIPanGestureRecognizer(
+            target: self,
+            action: #selector(SliderView.handlePan(_:))
+        )
+        addGestureRecognizer(panGestureRecognizer)
+
+        titleLabel = UILabel()
+        titleLabel!.textAlignment = .Center
+        titleLabel!.textColor = color
+        titleLabel!.text = title
+        addSubview(titleLabel!)
+
         valueLabel = UILabel()
         valueLabel!.textAlignment = .Center
         valueLabel!.textColor = color
-        valueLabel!.text = String(value)
-        valueLabel!.font = UIFont.monospacedDigitSystemFontOfSize(24, weight: UIFontWeightThin)
+        valueLabel!.text = text
         addSubview(valueLabel!)
 
         defaultButton = UIButton()
@@ -91,7 +115,11 @@ class SliderView: UIView {
         defaultButton!.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.5)
         decrementButton!.frame = CGRect(x: 0, y: height * 0.75, width: width, height: height * 0.25)
 
-        valueLabel!.frame = defaultButton!.frame
+        valueLabel!.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.475)
+        valueLabel!.font = UIFont.monospacedDigitSystemFontOfSize(height * 0.1, weight: UIFontWeightThin)
+
+        titleLabel!.frame = CGRect(x: 0, y: height * 0.5, width: width, height: height * 0.167)
+        titleLabel!.font = UIFont.monospacedDigitSystemFontOfSize(height * 0.0333, weight: UIFontWeightMedium)
     }
 
     override func drawRect(rect: CGRect) {
@@ -115,8 +143,12 @@ class SliderView: UIView {
 
         colorForState(incrementButton!.state).set()
 
+        let incrementArrowStart = max(
+            incrementButton!.frame.minY,
+            incrementButton!.frame.maxY - arrowRadius
+        )
         let incrementArrowLine = getSegment(
-            CGPoint(x: incrementButton!.frame.midX, y: incrementButton!.frame.minY + lineWidth),
+            CGPoint(x: incrementButton!.frame.midX, y: incrementArrowStart + lineWidth),
             radius: arrowRadius,
             startAngle: CGFloat(M_PI + halfGoldenAngleDistanceFromHorizontal),
             endAngle: CGFloat(M_PI * 2 - halfGoldenAngleDistanceFromHorizontal)
@@ -126,8 +158,12 @@ class SliderView: UIView {
 
         colorForState(decrementButton!.state).set()
 
+        let decrementArrowStart = min(
+            decrementButton!.frame.maxY,
+            decrementButton!.frame.minY + arrowRadius
+        )
         let decrementArrowLine = getSegment(
-            CGPoint(x: decrementButton!.frame.midX, y: decrementButton!.frame.maxY - lineWidth),
+            CGPoint(x: decrementButton!.frame.midX, y: decrementArrowStart - lineWidth),
             radius: arrowRadius,
             startAngle: CGFloat(halfGoldenAngleDistanceFromHorizontal),
             endAngle: CGFloat(M_PI - halfGoldenAngleDistanceFromHorizontal)
@@ -160,16 +196,36 @@ class SliderView: UIView {
         }
     }
 
+    func handlePan(recognizer: UIPanGestureRecognizer) {
+        let y = -recognizer.translationInView(self).y
+        let minYChange = bounds.height / CGFloat(stepsForHeight)
+        let change = round(y / minYChange)
+
+        if change != 0 {
+            recognizer.setTranslation(
+                CGPoint(x: 0, y: 0),
+                inView: self
+            )
+            incrementBy(Int(change))
+            sendActionsForControlEvents(.ValueChanged)
+        }
+    }
+
     func defaultAction(sender: AnyObject) {
 
     }
 
+    func incrementBy(inputValue: Int) {
+        value = max(min(value + inputValue * step, maximum), minimum)
+        sendActionsForControlEvents(.ValueChanged)
+    }
+
     func increment(sender: AnyObject) {
-        value += 1
+        incrementBy(1)
     }
 
     func decrement(sender: AnyObject) {
-        value -= 1
+        incrementBy(-1)
     }
 
 }

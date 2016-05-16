@@ -13,19 +13,26 @@ import AVFoundation
 class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     @IBOutlet weak var songLabel: UILabel!
+    @IBOutlet weak var pitchSlider: SliderView!
+    @IBOutlet weak var tempoSlider: SliderView!
+
     var mediaPicker: MPMediaPickerController?
     var audioFile: AVAudioFile?
     var audioEngine: AVAudioEngine?
     var audioPlayerNode: AVAudioPlayerNode?
     var timePitchNode: AVAudioUnitTimePitch?
-    var pitch: Int = 1 {
+    var pitch: Int = 0 {
         didSet {
             timePitchNode!.pitch = Float(pitch * 100)
+            pitchSlider.text = pitch >= 0
+                ? "+\(pitch)"
+                : "\(pitch)"
         }
     }
-    var tempo: Float = 100 {
+    var tempo: Int = 100 {
         didSet {
-            timePitchNode!.rate = Float(tempo / 100)
+            timePitchNode!.rate = Float(tempo) / 100
+            tempoSlider.text = "\(Int(tempo))%"
         }
     }
     var currentTime = 1.0
@@ -70,6 +77,14 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     @IBAction func playButtonPressed(sender: UIButton) {
         play()
+    }
+
+    @IBAction func pitchSliderChanged(sender: SliderView) {
+        pitch = sender.value
+    }
+
+    @IBAction func tempoSliderChanged(sender: SliderView) {
+        tempo = sender.value
     }
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
