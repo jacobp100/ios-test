@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -43,8 +44,8 @@
                                     <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2kH-xl-uCv"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="169.5" width="264" height="410.5"/>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="209" width="264" height="371"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -66,8 +67,8 @@
                                     <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
                                 </connections>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="316" y="169.5" width="264" height="410.5"/>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="316" y="209" width="264" height="371"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -92,6 +93,32 @@
                                     <action selector="tempoSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gyh-qV-GQF"/>
                                 </connections>
                             </view>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="52" y="169" width="496" height="32"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="1rc-ya-jrZ"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="Uc1-ud-G3U" customClass="CircleButton" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="169" width="32" height="32"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Uc1-ud-G3U" secondAttribute="height" multiplier="1:1" id="ufz-l8-ufU"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-Vh-SRi" customClass="CircleButton" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="548" y="169" width="32" height="32"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="eCb-Vh-SRi" secondAttribute="height" multiplier="1:1" id="8Ju-eS-ltg"/>
+                                </constraints>
+                            </view>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
@@ -100,33 +127,49 @@
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="Uc1-ud-G3U" secondAttribute="trailing" id="3Xi-G7-mF3"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="32" id="42a-Dn-HEK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qki-nF-ZFM" secondAttribute="trailing" id="6FI-Ys-Q4t"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="D7h-iU-1YW"/>
+                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="centerY" secondItem="zw0-dv-97D" secondAttribute="centerY" id="9Rj-8d-cvu"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="height" secondItem="Uc1-ud-G3U" secondAttribute="height" id="9qA-A0-d1Z"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="D7h-iU-1YW"/>
                             <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" id="E4T-Fm-FUg"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" id="Mlx-UK-Oes"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
+                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="leading" secondItem="zw0-dv-97D" secondAttribute="trailing" id="LzG-w1-Dub"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
+                            <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="UbQ-Sm-El0"/>
                             <constraint firstItem="LxH-SX-3YL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Ugf-9p-Ouo"/>
                             <constraint firstItem="LxH-SX-3YL" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="XVX-Mb-2Ao"/>
-                            <constraint firstItem="LxH-SX-3YL" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="YOh-X9-pVp"/>
+                            <constraint firstItem="LxH-SX-3YL" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" symbolic="YES" id="YOh-X9-pVp"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="height" secondItem="1zY-mU-nTF" secondAttribute="height" id="bjp-9v-tGH"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" id="dAe-7f-Nmi"/>
-                            <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" id="kzu-31-qhD"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="eCb-Vh-SRi" secondAttribute="trailing" id="d7q-B9-HgX"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="kQg-sI-v4J"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1zY-mU-nTF" secondAttribute="bottom" constant="20" id="srp-sf-n5y"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="centerY" secondItem="Uc1-ud-G3U" secondAttribute="centerY" id="tCU-h4-yMf"/>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
+                            <constraint firstItem="Uc1-ud-G3U" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="utJ-J3-oU6"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
+                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="height" secondItem="zw0-dv-97D" secondAttribute="height" id="x46-nn-wuP"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" symbolic="YES" id="ycf-Jx-b7u"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="zLE-MP-HDJ"/>
                             </mask>
+                            <mask key="constraints">
+                                <exclude reference="GID-aa-cBQ"/>
+                                <exclude reference="aq0-Dk-AM3"/>
+                            </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
+                        <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>
                         <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
                         <outlet property="tempoSlider" destination="qki-nF-ZFM" id="MQ4-kg-5YT"/>
                     </connections>

@@ -12,7 +12,7 @@ import Foundation
 class SliderView: UIControl {
 
     @IBInspectable
-    var color: UIColor = UIColor.blueColor() {
+    var color: UIColor = UIColor.whiteColor() {
         didSet {
             titleLabel?.textColor = color
             valueLabel?.textColor = color
@@ -110,34 +110,34 @@ class SliderView: UIControl {
     override func layoutSubviews() {
         let height = CGFloat(frame.size.height)
         let width = CGFloat(frame.size.width)
+        let arrowHeight = (height - width) / 2
+        let circleSize = min(width, height * 0.5)
 
-        incrementButton!.frame = CGRect(x: 0, y: 0, width: width, height: height * 0.25)
-        defaultButton!.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.5)
-        decrementButton!.frame = CGRect(x: 0, y: height * 0.75, width: width, height: height * 0.25)
+        incrementButton!.frame = CGRect(x: 0, y: 0, width: width, height: arrowHeight)
+        defaultButton!.frame = CGRect(x: 0, y: arrowHeight, width: width, height: width)
+        decrementButton!.frame = CGRect(x: 0, y: height - arrowHeight, width: width, height: arrowHeight)
 
         valueLabel!.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.475)
-        valueLabel!.font = UIFont.monospacedDigitSystemFontOfSize(height * 0.1, weight: UIFontWeightThin)
+        valueLabel!.font = UIFont.monospacedDigitSystemFontOfSize(circleSize * 0.3, weight: UIFontWeightThin)
 
         titleLabel!.frame = CGRect(x: 0, y: height * 0.5, width: width, height: height * 0.167)
-        titleLabel!.font = UIFont.monospacedDigitSystemFontOfSize(height * 0.0333, weight: UIFontWeightMedium)
+        titleLabel!.font = UIFont.monospacedDigitSystemFontOfSize(circleSize * 0.09, weight: UIFontWeightMedium)
     }
 
     override func drawRect(rect: CGRect) {
         color.set()
 
         let radius = min(defaultButton!.frame.width, defaultButton!.frame.height) / 2 - lineWidth
-        let centre = CGPoint(x: bounds.midX, y: bounds.midY)
         let arrowRadius = radius / CGFloat(goldenRatio)
 
         colorForState(defaultButton!.state).set()
 
-        let circle = UIBezierPath(
-            arcCenter: centre,
-            radius: radius,
-            startAngle: 0,
-            endAngle: CGFloat(2 * M_PI),
-            clockwise: true
-        )
+        let circle = UIBezierPath(ovalInRect: CGRect(
+            x: defaultButton!.frame.minX + lineWidth / 2,
+            y: defaultButton!.frame.minY + lineWidth / 2,
+            width: defaultButton!.frame.width - lineWidth,
+            height: defaultButton!.frame.height - lineWidth
+        ))
         circle.lineWidth = lineWidth
         circle.stroke()
 

@@ -13,9 +13,11 @@ import AVFoundation
 class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     @IBOutlet weak var songLabel: UILabel!
+    @IBOutlet weak var playbackSlider: PlaySlider!
     @IBOutlet weak var pitchSlider: SliderView!
     @IBOutlet weak var tempoSlider: SliderView!
 
+    var displayLink: CADisplayLink?
     var mediaPicker: MPMediaPickerController?
     var audioFile: AVAudioFile?
     var audioEngine: AVAudioEngine?
@@ -32,13 +34,26 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
     var tempo: Int = 100 {
         didSet {
             timePitchNode!.rate = Float(tempo) / 100
-            tempoSlider.text = "\(Int(tempo))%"
+            tempoSlider.text = "\(tempo)%"
         }
     }
-    var currentTime = 1.0
+    var totalDuration: Double = 0 {
+        didSet {
+            playbackSlider.maximum = totalDuration
+        }
+    }
+    var currentTime: Double = 0 {
+        didSet {
+            playbackSlider.value = currentTime
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
+        displayLink!.paused = true
+        displayLink!.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 
         let bundle = NSBundle.mainBundle()
         let demoFile = bundle.URLForResource("starwars", withExtension: "mp3")!
@@ -85,6 +100,11 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     @IBAction func tempoSliderChanged(sender: SliderView) {
         tempo = sender.value
+
+        let playerTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
+        let totalTime = audioFile?.length;
+        print(Double(playerTime!.sampleTime) / playerTime!.sampleRate)
+        print(Double(totalTime!) / playerTime!.sampleRate)
     }
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
@@ -104,6 +124,17 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
         audioPlayerNode!.scheduleFile(audioFile!, atTime: nil, completionHandler: nil)
         audioPlayerNode!.play()
+
+        let zeroAudioTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
+        currentTime = 0
+        totalDuration = Double(audioFile!.length) / zeroAudioTime!.sampleRate
+
+        displayLink!.paused = false
+    }
+
+    func updateTime() {
+        let currentAudioTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
+        currentTime = Double(currentAudioTime!.sampleTime) / currentAudioTime!.sampleRate
     }
 
 }
