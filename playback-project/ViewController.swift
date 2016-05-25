@@ -20,12 +20,12 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
     var displayLink: CADisplayLink?
     var mediaPicker: MPMediaPickerController?
     var audioFile: AVAudioFile?
-    var audioEngine: AVAudioEngine?
-    var audioPlayerNode: AVAudioPlayerNode?
-    var timePitchNode: AVAudioUnitTimePitch?
+    var audioEngine = AVAudioEngine()
+    var audioPlayerNode = AVAudioPlayerNode()
+    var timePitchNode = AVAudioUnitTimePitch()
     var pitch: Int = 0 {
         didSet {
-            timePitchNode!.pitch = Float(pitch * 100)
+            timePitchNode.pitch = Float(pitch * 100)
             pitchSlider.text = pitch >= 0
                 ? "+\(pitch)"
                 : "\(pitch)"
@@ -33,7 +33,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
     }
     var tempo: Int = 100 {
         didSet {
-            timePitchNode!.rate = Float(tempo) / 100
+            timePitchNode.rate = Float(tempo) / 100
             tempoSlider.text = "\(tempo)%"
         }
     }
@@ -63,13 +63,13 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         audioEngine = AVAudioEngine()
 
         audioPlayerNode = AVAudioPlayerNode()
-        audioEngine!.attachNode(audioPlayerNode!)
+        audioEngine.attachNode(audioPlayerNode)
 
         timePitchNode = AVAudioUnitTimePitch()
-        audioEngine!.attachNode(timePitchNode!)
+        audioEngine.attachNode(timePitchNode)
 
-        audioEngine!.connect(audioPlayerNode!, to: timePitchNode!, format: nil)
-        audioEngine!.connect(timePitchNode!, to: audioEngine!.outputNode, format: nil)
+        audioEngine.connect(audioPlayerNode, to: timePitchNode, format: nil)
+        audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
 
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
     }
@@ -100,11 +100,10 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     @IBAction func tempoSliderChanged(sender: SliderView) {
         tempo = sender.value
-
-        let playerTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
-        let totalTime = audioFile?.length;
-        print(Double(playerTime!.sampleTime) / playerTime!.sampleRate)
-        print(Double(totalTime!) / playerTime!.sampleRate)
+//        let playerTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
+//        let totalTime = audioFile?.length;
+//        print(Double(playerTime!.sampleTime) / playerTime!.sampleRate)
+//        print(Double(totalTime!) / playerTime!.sampleRate)
     }
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
@@ -116,16 +115,16 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
     }
 
     func play() {
-        audioPlayerNode!.stop()
-        audioEngine!.stop()
-        audioEngine!.reset()
+        audioPlayerNode.stop()
+        audioEngine.stop()
+        audioEngine.reset()
 
-        try! audioEngine!.start()
+        try! audioEngine.start()
 
-        audioPlayerNode!.scheduleFile(audioFile!, atTime: nil, completionHandler: nil)
-        audioPlayerNode!.play()
+        audioPlayerNode.scheduleFile(audioFile!, atTime: nil, completionHandler: nil)
+        audioPlayerNode.play()
 
-        let zeroAudioTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
+        let zeroAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
         currentTime = 0
         totalDuration = Double(audioFile!.length) / zeroAudioTime!.sampleRate
 
@@ -133,7 +132,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
     }
 
     func updateTime() {
-        let currentAudioTime = audioPlayerNode!.playerTimeForNodeTime(audioPlayerNode!.lastRenderTime!)
+        let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
         currentTime = Double(currentAudioTime!.sampleTime) / currentAudioTime!.sampleRate
     }
 

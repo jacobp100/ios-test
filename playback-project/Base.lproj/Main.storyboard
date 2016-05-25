@@ -44,29 +44,6 @@
                                     <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2kH-xl-uCv"/>
                                 </connections>
                             </button>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="209" width="264" height="371"/>
-                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="minimum">
-                                        <integer key="value" value="-12"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="maximum">
-                                        <integer key="value" value="12"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="value">
-                                        <integer key="value" value="0"/>
-                                    </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="text" value="+0"/>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Pitch"/>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
-                                </connections>
-                            </view>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
                                 <rect key="frame" x="316" y="209" width="264" height="371"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
@@ -105,14 +82,14 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="Uc1-ud-G3U" customClass="CircleButton" customModule="playback_project" customModuleProvider="target">
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="Uc1-ud-G3U" customClass="UIButton">
                                 <rect key="frame" x="20" y="169" width="32" height="32"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Uc1-ud-G3U" secondAttribute="height" multiplier="1:1" id="ufz-l8-ufU"/>
                                 </constraints>
                             </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-Vh-SRi" customClass="CircleButton" customModule="playback_project" customModuleProvider="target">
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-Vh-SRi" customClass="UIButton">
                                 <rect key="frame" x="548" y="169" width="32" height="32"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -122,6 +99,32 @@
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="209" width="264" height="371"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="value">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="minimum">
+                                        <integer key="value" value="-12"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="maximum">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="step">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="Pitch"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="text" value="+0"/>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
+                                </connections>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

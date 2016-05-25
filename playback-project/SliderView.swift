@@ -14,8 +14,8 @@ class SliderView: UIControl {
     @IBInspectable
     var color: UIColor = UIColor.whiteColor() {
         didSet {
-            titleLabel?.textColor = color
-            valueLabel?.textColor = color
+            titleLabel.textColor = color
+            valueLabel.textColor = color
         }
     }
     @IBInspectable
@@ -31,145 +31,128 @@ class SliderView: UIControl {
     @IBInspectable
     var stepsForHeight: Int = 5
     @IBInspectable
-    var title: String = "" { didSet { titleLabel?.text = title.uppercaseString } }
+    var title: String = "" { didSet { titleLabel.text = title.uppercaseString } }
     @IBInspectable
-    var text: String = "" { didSet { valueLabel?.text = text } }
+    var text: String = "" { didSet { valueLabel.text = text } }
 
     private var defaultValue: Int!
 
     private let goldenRatio = (1 + sqrt(5.0)) / 2
     private let halfGoldenAngleDistanceFromHorizontal = (M_PI - (M_PI * (3.0 - sqrt(5)))) / 2
 
-    private var defaultButton: UIButton?
-    private var incrementButton: UIButton?
-    private var decrementButton: UIButton?
-    private var titleLabel: UILabel?
-    private var valueLabel: UILabel?
+    private var defaultButton = ShapeButton()
+    private var incrementButton = ShapeButton()
+    private var decrementButton = ShapeButton()
+    private var titleLabel = UILabel()
+    private var valueLabel = UILabel()
+    private var panGestureRecognizer: UIPanGestureRecognizer!
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        let panGestureRecognizer = UIPanGestureRecognizer(
+        panGestureRecognizer = UIPanGestureRecognizer(
             target: self,
             action: #selector(SliderView.handlePan(_:))
         )
         addGestureRecognizer(panGestureRecognizer)
 
-        titleLabel = UILabel()
-        titleLabel!.textAlignment = .Center
-        titleLabel!.textColor = color
-        titleLabel!.text = title
-        addSubview(titleLabel!)
+        setup()
+    }
 
-        valueLabel = UILabel()
-        valueLabel!.textAlignment = .Center
-        valueLabel!.textColor = color
-        valueLabel!.text = text
-        addSubview(valueLabel!)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
 
-        defaultButton = UIButton()
-        defaultButton!.addTarget(
+    func setup() {
+        titleLabel.textAlignment = .Center
+        titleLabel.textColor = color
+        titleLabel.text = title
+        addSubview(titleLabel)
+
+        valueLabel.textAlignment = .Center
+        valueLabel.textColor = color
+        valueLabel.text = text
+        addSubview(valueLabel)
+
+        defaultButton.addTarget(
             self,
             action: #selector(SliderView.defaultAction(_:)),
             forControlEvents: .TouchDown
         )
-        defaultButton!.addTarget(
+        defaultButton.addTarget(
             self,
             action: #selector(SliderView.setNeedsDisplay),
             forControlEvents: [.AllTouchEvents]
         )
-        addSubview(defaultButton!)
+        addSubview(defaultButton)
 
-        incrementButton = UIButton()
-        incrementButton!.addTarget(
+        incrementButton.addTarget(
             self,
             action: #selector(SliderView.increment(_:)),
             forControlEvents: .TouchUpInside
         )
-        incrementButton!.addTarget(
+        incrementButton.addTarget(
             self,
             action: #selector(SliderView.setNeedsDisplay),
             forControlEvents: [.AllTouchEvents]
         )
-        addSubview(incrementButton!)
+        addSubview(incrementButton)
 
-        decrementButton = UIButton()
-        decrementButton!.addTarget(
+        decrementButton.addTarget(
             self,
             action: #selector(SliderView.decrement(_:)),
             forControlEvents: .TouchUpInside
         )
-        decrementButton!.addTarget(
+        decrementButton.addTarget(
             self,
             action: #selector(SliderView.setNeedsDisplay),
             forControlEvents: [.AllTouchEvents]
         )
-        addSubview(decrementButton!)
+        addSubview(decrementButton)
     }
 
     override func layoutSubviews() {
         let height = CGFloat(frame.size.height)
         let width = CGFloat(frame.size.width)
         let arrowHeight = (height - width) / 2
-        let circleSize = min(width, height * 0.5)
 
-        incrementButton!.frame = CGRect(x: 0, y: 0, width: width, height: arrowHeight)
-        defaultButton!.frame = CGRect(x: 0, y: arrowHeight, width: width, height: width)
-        decrementButton!.frame = CGRect(x: 0, y: height - arrowHeight, width: width, height: arrowHeight)
+        incrementButton.frame = CGRect(x: 0, y: 0, width: width, height: arrowHeight)
+        defaultButton.frame = CGRect(x: 0, y: arrowHeight, width: width, height: width)
+        decrementButton.frame = CGRect(x: 0, y: height - arrowHeight, width: width, height: arrowHeight)
 
-        valueLabel!.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.475)
-        valueLabel!.font = UIFont.monospacedDigitSystemFontOfSize(circleSize * 0.3, weight: UIFontWeightThin)
+        let radius = width / 2 - lineWidth
+        let arrowHorizontalOrigin = width / 2
+        let arrowVerticalOrigin = width / 2
+        let arrowRadius = width / (2 * CGFloat(goldenRatio))
 
-        titleLabel!.frame = CGRect(x: 0, y: height * 0.5, width: width, height: height * 0.167)
-        titleLabel!.font = UIFont.monospacedDigitSystemFontOfSize(circleSize * 0.09, weight: UIFontWeightMedium)
-    }
-
-    override func drawRect(rect: CGRect) {
-        color.set()
-
-        let radius = min(defaultButton!.frame.width, defaultButton!.frame.height) / 2 - lineWidth
-        let arrowRadius = radius / CGFloat(goldenRatio)
-
-        colorForState(defaultButton!.state).set()
-
-        let circle = UIBezierPath(ovalInRect: CGRect(
-            x: defaultButton!.frame.minX + lineWidth / 2,
-            y: defaultButton!.frame.minY + lineWidth / 2,
-            width: defaultButton!.frame.width - lineWidth,
-            height: defaultButton!.frame.height - lineWidth
-        ))
-        circle.lineWidth = lineWidth
-        circle.stroke()
-
-        colorForState(incrementButton!.state).set()
-
-        let incrementArrowStart = max(
-            incrementButton!.frame.minY,
-            incrementButton!.frame.maxY - arrowRadius
-        )
-        let incrementArrowLine = getSegment(
-            CGPoint(x: incrementButton!.frame.midX, y: incrementArrowStart + lineWidth),
+        incrementButton.path = getSegment(
+            CGPoint(x: arrowHorizontalOrigin, y: max(arrowHeight - arrowVerticalOrigin, 0)),
             radius: arrowRadius,
             startAngle: CGFloat(M_PI + halfGoldenAngleDistanceFromHorizontal),
             endAngle: CGFloat(M_PI * 2 - halfGoldenAngleDistanceFromHorizontal)
-        )
-        incrementArrowLine.lineWidth = lineWidth
-        incrementArrowLine.stroke()
+        ).CGPath
 
-        colorForState(decrementButton!.state).set()
-
-        let decrementArrowStart = min(
-            decrementButton!.frame.maxY,
-            decrementButton!.frame.minY + arrowRadius
-        )
-        let decrementArrowLine = getSegment(
-            CGPoint(x: decrementButton!.frame.midX, y: decrementArrowStart - lineWidth),
+        decrementButton.path = getSegment(
+            CGPoint(x: arrowHorizontalOrigin, y: min(arrowVerticalOrigin, arrowHeight)),
             radius: arrowRadius,
             startAngle: CGFloat(halfGoldenAngleDistanceFromHorizontal),
             endAngle: CGFloat(M_PI - halfGoldenAngleDistanceFromHorizontal)
-        )
-        decrementArrowLine.lineWidth = lineWidth
-        decrementArrowLine.stroke()
+        ).CGPath
+
+        defaultButton.path = UIBezierPath(
+            arcCenter: CGPoint(x: width / 2, y: width / 2),
+            radius: radius,
+            startAngle: 0,
+            endAngle: CGFloat(M_PI * 2),
+            clockwise: true
+        ).CGPath
+
+        valueLabel.frame = CGRect(x: 0, y: height * 0.25, width: width, height: height * 0.475)
+        valueLabel.font = UIFont.monospacedDigitSystemFontOfSize(radius * 0.6, weight: UIFontWeightThin)
+
+        titleLabel.frame = CGRect(x: 0, y: height * 0.5, width: width, height: height * 0.167)
+        titleLabel.font = UIFont.monospacedDigitSystemFontOfSize(radius * 0.15, weight: UIFontWeightMedium)
     }
 
     func getSegment(arcCenter: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle: CGFloat) -> UIBezierPath {
@@ -178,22 +161,14 @@ class SliderView: UIControl {
         line.moveToPoint(CGPoint(
             x: arcCenter.x + cos(startAngle) * radius,
             y: arcCenter.y - sin(startAngle) * radius
-        ))
+            ))
         line.addLineToPoint(arcCenter)
         line.addLineToPoint(CGPoint(
             x: arcCenter.x + cos(endAngle) * radius,
             y: arcCenter.y - sin(endAngle) * radius
-        ))
+            ))
 
         return line
-    }
-
-    func colorForState(state: UIControlState) -> UIColor {
-        if state == .Highlighted {
-            return color.colorWithAlphaComponent(0.5)
-        } else {
-            return color
-        }
     }
 
     func handlePan(recognizer: UIPanGestureRecognizer) {
