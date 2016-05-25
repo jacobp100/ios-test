@@ -32,7 +32,9 @@ class ShapeButton: UIButton {
 
     override var highlighted: Bool {
         didSet {
-            setStrokeColor()
+            if oldValue != highlighted {
+                setStrokeColor()
+            }
         }
     }
 

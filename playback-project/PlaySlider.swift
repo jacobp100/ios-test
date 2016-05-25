@@ -21,48 +21,34 @@ class PlaySlider: UIControl {
     @IBInspectable
     var maximum: Double = 100 { didSet { setNeedsLayout() } }
 
-    private var playPauseButton: UIButton?
+    private var playPauseButton = ShapeButton()
+    private var sliderSize: CGFloat {
+        get {
+            return frame.size.height
+        }
+    }
+    private var sliderPosition: CGFloat {
+        get {
+            return (frame.size.width - frame.size.height) * CGFloat(value / (maximum - minimum))
+        }
+    }
 
-    #if !TARGET_INTERFACE_BUILDER
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        self.tintAdjustmentMode = .Dimmed
-
-        playPauseButton = UIButton(type: .System)
-        playPauseButton?.setTitle("a", forState: .Normal)
-        playPauseButton!.layer.borderColor = color.CGColor
-        playPauseButton!.layer.borderWidth = lineWidth
-        addSubview(playPauseButton!)
+        addSubview(playPauseButton)
     }
-    #endif
 
     override func layoutSubviews() {
-        let height = CGFloat(frame.size.height)
-        let width = CGFloat(frame.size.width)
+        playPauseButton.frame = CGRect(x: 0, y: 0, width: frame.size.width, height: sliderSize)
 
-        let sliderPosition = (width - height) * CGFloat(value / (maximum - minimum))
+        let path = UIBezierPath(ovalInRect: CGRect(x: sliderPosition, y: 0, width: sliderSize, height: sliderSize))
+        path.moveToPoint(CGPoint(x: bounds.minX, y: bounds.midY))
+        path.addLineToPoint(CGPoint(x: sliderPosition, y: playPauseButton.frame.midY))
+        path.moveToPoint(CGPoint(x: sliderPosition + sliderSize, y: playPauseButton.frame.midY))
+        path.addLineToPoint(CGPoint(x: bounds.maxX, y: bounds.midY))
 
-        playPauseButton!.frame = CGRect(x: sliderPosition, y: 0, width: height, height: height)
-        playPauseButton!.layer.cornerRadius = height / 2
-    }
-
-    override func drawRect(rect: CGRect) {
-        tintColor.set()
-
-        let leftLine = UIBezierPath()
-        leftLine.moveToPoint(CGPoint(x: bounds.minX, y: bounds.midY))
-        leftLine.addLineToPoint(CGPoint(x: playPauseButton!.frame.minX, y: playPauseButton!.frame.midY))
-        leftLine.lineWidth = lineWidth
-        leftLine.lineCapStyle = .Square
-        leftLine.stroke()
-
-        let rightLine = UIBezierPath()
-        rightLine.moveToPoint(CGPoint(x: playPauseButton!.frame.maxX, y: playPauseButton!.frame.midY))
-        rightLine.addLineToPoint(CGPoint(x: bounds.maxX, y: bounds.midY))
-        rightLine.lineWidth = lineWidth
-        rightLine.lineCapStyle = .Square
-        rightLine.stroke()
+        playPauseButton.path = path.CGPath
     }
 
 }
