@@ -10,7 +10,7 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
-class ViewController: UIViewController, MPMediaPickerControllerDelegate {
+class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate {
 
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playbackSlider: PlaySlider!
@@ -37,19 +37,27 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
             tempoSlider.text = "\(tempo)%"
         }
     }
-    var totalDuration: Double = 0 {
+    var sampleRate: Double? = nil
+    var totalDuration: Double? = nil {
         didSet {
-            playbackSlider.maximum = totalDuration
+            if let totalDuration = totalDuration {
+                playbackSlider.maximum = totalDuration
+            }
         }
     }
-    var currentTime: Double = 0 {
+    var currentTimeOffset: Double? = nil
+    var currentTime: Double? = nil {
         didSet {
-            playbackSlider.value = currentTime
+            if let currentTime = currentTime, currentTimeOffset = currentTimeOffset {
+                playbackSlider.value = currentTime + currentTimeOffset
+            }
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        playbackSlider.delegate = self
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
         displayLink!.paused = true
@@ -93,20 +101,12 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         }
     }
 
-    @IBAction func playButtonPressed(sender: UIButton) {
-        play()
-    }
-
     @IBAction func pitchSliderChanged(sender: SliderView) {
         pitch = sender.value
     }
 
     @IBAction func tempoSliderChanged(sender: SliderView) {
         tempo = sender.value
-//        let playerTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
-//        let totalTime = audioFile?.length;
-//        print(Double(playerTime!.sampleTime) / playerTime!.sampleRate)
-//        print(Double(totalTime!) / playerTime!.sampleRate)
     }
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
@@ -117,28 +117,60 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
     }
 
-    func play() {
-        audioPlayerNode.stop()
+    func playSliderDidTogglePlaying() {
+        if audioPlayerNode.playing {
+            audioPlayerNode.pause()
+        } else if audioEngine.running {
+            audioPlayerNode.play()
+        } else {
+            playFile()
+        }
+    }
 
+    func playSliderValueDidChange(value: Double) {
+        seek(value)
+    }
+
+    func playFile() {
         if !audioEngine.running {
             try! audioEngine.start()
         }
 
-        audioPlayerNode.scheduleFile(audioFile!, atTime: AVAudioTime(hostTime: 0), completionHandler: {
-            self.audioPlayerNode.pause()
-            self.currentTime = 0
-            self.displayLink!.paused = true
-        })
-        audioPlayerNode.play()
-
-        let zeroAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
-        currentTime = 0
-        totalDuration = Double(audioFile!.length) / zeroAudioTime!.sampleRate
-
-        displayLink!.paused = false
+        seek(0)
     }
 
-    func handler(buffer:AVAudioPCMBuffer!,time:AVAudioTime!) {
+    func seek(time: Double) {
+        audioPlayerNode.stop()
+
+        let playbackSampleRate = sampleRate ?? 0
+
+        if time < totalDuration ?? Double.infinity || playbackSampleRate == 0 {
+            audioPlayerNode.scheduleSegment(
+                audioFile!,
+                startingFrame: AVAudioFramePosition(playbackSampleRate * time),
+                frameCount: AVAudioFrameCount(Double(audioFile!.length) - time * playbackSampleRate),
+                atTime: nil,
+                completionHandler: nil
+            )
+            audioPlayerNode.play()
+
+            let zeroAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)!
+            sampleRate = zeroAudioTime.sampleRate
+            currentTimeOffset = time
+            currentTime = 0
+            totalDuration = (time + Double(audioFile!.length)) / sampleRate!
+
+            displayLink!.paused = false
+        } else {
+            audioPlayerNode.stop()
+            sampleRate = nil
+            currentTimeOffset = nil
+            currentTime = nil
+            totalDuration = nil
+        }
+    }
+
+    func handler() {
         print(time)
     }
 

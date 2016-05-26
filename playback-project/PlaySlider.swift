@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol PlaySliderDelegate {
+    func playSliderDidTogglePlaying()
+    func playSliderValueDidChange(value: Double)
+}
+
 @IBDesignable
 class PlaySlider: UIControl {
 
@@ -21,6 +26,8 @@ class PlaySlider: UIControl {
     var minimum: Double = 0 { didSet { setNeedsLayout() } }
     @IBInspectable
     var maximum: Double = 100 { didSet { setNeedsLayout() } }
+
+    var delegate: PlaySliderDelegate?
 
     private var playPauseButton = ShapeButton()
     private var previousButton = ShapeButton()
@@ -56,6 +63,12 @@ class PlaySlider: UIControl {
         )
         addGestureRecognizer(panGestureRecognizer)
 
+        playPauseButton.addTarget(
+            self,
+            action: #selector(PlaySlider.playButtonPressed),
+            forControlEvents: .TouchUpInside
+        )
+
         setup()
     }
 
@@ -77,12 +90,11 @@ class PlaySlider: UIControl {
         playPauseButton.frame = CGRect(x: sliderSize, y: 0, width: sliderWidth, height: sliderSize)
         nextButton.frame = CGRect(x: width - sliderSize, y: 0, width: sliderSize, height: sliderSize)
 
-        let playPausePath = UIBezierPath(ovalInRect: CGRect(
-            x: sliderPosition + lineWidth / 2,
-            y: lineWidth / 2,
-            width: sliderSize - lineWidth,
-            height: sliderSize - lineWidth
-        ))
+        let playPauseButtonRect = rectForButton(sliderPosition)
+
+        let playPausePath = UIBezierPath()
+        drawButtonOutline(playPausePath, frame: playPauseButtonRect)
+        drawPauseButton(playPausePath, frame: playPauseButtonRect)
         playPausePath.moveToPoint(CGPoint(x: 0, y: bounds.midY))
         playPausePath.addLineToPoint(CGPoint(x: sliderPosition, y: playPauseButton.frame.midY))
         playPausePath.moveToPoint(CGPoint(x: sliderPosition + sliderSize, y: playPauseButton.frame.midY))
@@ -90,15 +102,22 @@ class PlaySlider: UIControl {
 
         playPauseButton.path = playPausePath.CGPath
 
-        let previousNextPath = UIBezierPath(ovalInRect: CGRect(
-            x: lineWidth / 2,
-            y: lineWidth / 2,
-            width: sliderSize - lineWidth,
-            height: sliderSize - lineWidth
-        ))
+        let buttonRect = rectForButton()
 
-        previousButton.path = previousNextPath.CGPath
-        nextButton.path = previousNextPath.CGPath
+        let previousPath = UIBezierPath()
+        drawButtonOutline(previousPath, frame: buttonRect)
+        drawPreviousButton(previousPath, frame: buttonRect)
+
+        let nextPath = UIBezierPath()
+        drawButtonOutline(nextPath, frame: buttonRect)
+        drawNextButton(nextPath, frame: buttonRect)
+
+        previousButton.path = previousPath.CGPath
+        nextButton.path = nextPath.CGPath
+    }
+
+    func playButtonPressed() {
+        delegate?.playSliderDidTogglePlaying()
     }
 
     func handlePan(recognizer: UIPanGestureRecognizer) {
@@ -106,6 +125,7 @@ class PlaySlider: UIControl {
         case .Began:
             isDragging = true
         case .Ended:
+            delegate?.playSliderValueDidChange(Double(dragPosition))
             isDragging = false
             dragPosition = -1
         case .Changed:
@@ -115,6 +135,64 @@ class PlaySlider: UIControl {
         default:
             break
         }
+    }
+
+    func rectForButton() -> CGRect {
+        return rectForButton(0)
+    }
+
+    func rectForButton(position: CGFloat) -> CGRect {
+        return CGRect(
+            x: position,
+            y: 0,
+            width: sliderSize,
+            height: sliderSize
+        )
+    }
+
+    func drawButtonOutline(ctx: UIBezierPath, frame: CGRect) {
+        ctx.appendPath(UIBezierPath(ovalInRect: CGRect(
+            x: frame.minX + lineWidth / 2,
+            y: frame.minY + lineWidth / 2,
+            width: frame.width - lineWidth,
+            height: frame.height - lineWidth
+        )))
+    }
+
+    func getDrawButtonBounds(frame: CGRect) -> (x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
+        let x1 = frame.minX + frame.width * 5 / 13
+        let x2 = frame.minX + frame.width * 8 / 13
+        let y1 = frame.minY + frame.height * 1 / 3
+        let y2 = frame.minY + frame.height * 2 / 3
+        return (x1, x2, y1, y2)
+    }
+
+    func drawPauseButton(ctx: UIBezierPath, frame: CGRect) {
+        let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
+        ctx.moveToPoint(CGPoint(x: x1, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x1, y: y2))
+        ctx.moveToPoint(CGPoint(x: x2, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+    }
+
+    func drawPreviousButton(ctx: UIBezierPath, frame: CGRect) {
+        let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
+        ctx.moveToPoint(CGPoint(x: x1, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x1, y: y2))
+        ctx.moveToPoint(CGPoint(x: x2, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+        ctx.addLineToPoint(CGPoint(x: x1 + lineWidth, y: (y2 - y1) / 2 + y1))
+        ctx.closePath()
+    }
+
+    func drawNextButton(ctx: UIBezierPath, frame: CGRect) {
+        let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
+        ctx.moveToPoint(CGPoint(x: x2, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+        ctx.moveToPoint(CGPoint(x: x1, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x1, y: y2))
+        ctx.addLineToPoint(CGPoint(x: x2 - lineWidth, y: (y2 - y1) / 2 + y1))
+        ctx.closePath()
     }
 
 }

@@ -35,16 +35,8 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
-                                <rect key="frame" x="20" y="131" width="374" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="Play"/>
-                                <connections>
-                                    <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2kH-xl-uCv"/>
-                                </connections>
-                            </button>
-                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="223" y="205" width="171" height="511"/>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="223" y="168" width="171" height="548"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -72,23 +64,8 @@
                                     <action selector="tempoSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gyh-qV-GQF"/>
                                 </connections>
                             </view>
-                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="169" width="374" height="28"/>
-                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="28" id="1rc-ya-jrZ"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
-                                <rect key="frame" x="79" y="121" width="118" height="31"/>
-                            </slider>
-                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="205" width="171" height="511"/>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="168" width="171" height="548"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -113,6 +90,21 @@
                                     <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
                                 </connections>
                             </view>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="132" width="374" height="28"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="28" id="1rc-ya-jrZ"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
+                                <rect key="frame" x="79" y="121" width="118" height="31"/>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -124,11 +116,9 @@
                             <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="KF1-pO-GkD"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
                             <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="UbQ-Sm-El0"/>
-                            <constraint firstItem="LxH-SX-3YL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Ugf-9p-Ouo"/>
-                            <constraint firstItem="LxH-SX-3YL" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="XVX-Mb-2Ao"/>
-                            <constraint firstItem="LxH-SX-3YL" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" symbolic="YES" id="YOh-X9-pVp"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="height" secondItem="1zY-mU-nTF" secondAttribute="height" id="bjp-9v-tGH"/>
@@ -137,7 +127,6 @@
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" symbolic="YES" id="ycf-Jx-b7u"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yrz-8r-JMO"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
