@@ -72,6 +72,9 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
 
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
+
+        tempoSlider.maximum = 100000
+        tempoSlider.step = 10000
     }
 
     override func didReceiveMemoryWarning() {
@@ -116,12 +119,16 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
 
     func play() {
         audioPlayerNode.stop()
-        audioEngine.stop()
-        audioEngine.reset()
 
-        try! audioEngine.start()
+        if !audioEngine.running {
+            try! audioEngine.start()
+        }
 
-        audioPlayerNode.scheduleFile(audioFile!, atTime: nil, completionHandler: nil)
+        audioPlayerNode.scheduleFile(audioFile!, atTime: AVAudioTime(hostTime: 0), completionHandler: {
+            self.audioPlayerNode.pause()
+            self.currentTime = 0
+            self.displayLink!.paused = true
+        })
         audioPlayerNode.play()
 
         let zeroAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
@@ -131,9 +138,15 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate {
         displayLink!.paused = false
     }
 
+    func handler(buffer:AVAudioPCMBuffer!,time:AVAudioTime!) {
+        print(time)
+    }
+
     func updateTime() {
-        let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)
-        currentTime = Double(currentAudioTime!.sampleTime) / currentAudioTime!.sampleRate
+        if let lastRenderTime = audioPlayerNode.lastRenderTime,
+            let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(lastRenderTime) {
+            currentTime = Double(currentAudioTime.sampleTime) / currentAudioTime.sampleRate
+        }
     }
 
 }
