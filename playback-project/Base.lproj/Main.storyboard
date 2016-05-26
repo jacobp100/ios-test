@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -16,11 +15,11 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ezg-zw-f3a">
-                                <rect key="frame" x="20" y="28" width="560" height="30"/>
+                                <rect key="frame" x="20" y="28" width="374" height="30"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Add Song">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -30,22 +29,22 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Star Wars" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nsO-Eg-AVp">
-                                <rect key="frame" x="20" y="66" width="560" height="58"/>
+                                <rect key="frame" x="20" y="66" width="374" height="58"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="48"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
-                                <rect key="frame" x="20" y="131.5" width="560" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LxH-SX-3YL">
+                                <rect key="frame" x="20" y="131" width="374" height="30"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Play"/>
                                 <connections>
                                     <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2kH-xl-uCv"/>
                                 </connections>
                             </button>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="316" y="209" width="264" height="371"/>
+                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="223" y="205" width="171" height="511"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -70,11 +69,11 @@
                                     <action selector="tempoSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="Gyh-qV-GQF"/>
                                 </connections>
                             </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="52" y="169" width="496" height="32"/>
+                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="169" width="374" height="28"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="1rc-ya-jrZ"/>
+                                    <constraint firstAttribute="height" constant="28" id="1rc-ya-jrZ"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -82,25 +81,11 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="Uc1-ud-G3U" customClass="UIButton">
-                                <rect key="frame" x="20" y="169" width="32" height="32"/>
-                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="Uc1-ud-G3U" secondAttribute="height" multiplier="1:1" id="ufz-l8-ufU"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-Vh-SRi" customClass="UIButton">
-                                <rect key="frame" x="548" y="169" width="32" height="32"/>
-                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="eCb-Vh-SRi" secondAttribute="height" multiplier="1:1" id="8Ju-eS-ltg"/>
-                                </constraints>
-                            </view>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="209" width="264" height="371"/>
+                            <view contentMode="redraw" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="205" width="171" height="511"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -130,16 +115,12 @@
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="Uc1-ud-G3U" secondAttribute="trailing" id="3Xi-G7-mF3"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="32" id="42a-Dn-HEK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="qki-nF-ZFM" secondAttribute="trailing" id="6FI-Ys-Q4t"/>
-                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="centerY" secondItem="zw0-dv-97D" secondAttribute="centerY" id="9Rj-8d-cvu"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="height" secondItem="Uc1-ud-G3U" secondAttribute="height" id="9qA-A0-d1Z"/>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="D7h-iU-1YW"/>
                             <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
-                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="leading" secondItem="zw0-dv-97D" secondAttribute="trailing" id="LzG-w1-Dub"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
                             <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="UbQ-Sm-El0"/>
                             <constraint firstItem="LxH-SX-3YL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Ugf-9p-Ouo"/>
@@ -148,16 +129,14 @@
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="height" secondItem="1zY-mU-nTF" secondAttribute="height" id="bjp-9v-tGH"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="eCb-Vh-SRi" secondAttribute="trailing" id="d7q-B9-HgX"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="kQg-sI-v4J"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1zY-mU-nTF" secondAttribute="bottom" constant="20" id="srp-sf-n5y"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="centerY" secondItem="Uc1-ud-G3U" secondAttribute="centerY" id="tCU-h4-yMf"/>
                             <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
-                            <constraint firstItem="Uc1-ud-G3U" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="utJ-J3-oU6"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
-                            <constraint firstItem="eCb-Vh-SRi" firstAttribute="height" secondItem="zw0-dv-97D" secondAttribute="height" id="x46-nn-wuP"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="LxH-SX-3YL" secondAttribute="bottom" constant="8" symbolic="YES" id="ycf-Jx-b7u"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yrz-8r-JMO"/>
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
                         </constraints>
                         <variation key="default">
@@ -170,6 +149,7 @@
                             </mask>
                         </variation>
                     </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
                         <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
                         <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>

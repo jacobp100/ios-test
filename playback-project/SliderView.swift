@@ -9,6 +9,7 @@
 import UIKit
 import Foundation
 
+@IBDesignable
 class SliderView: UIControl {
 
     @IBInspectable
