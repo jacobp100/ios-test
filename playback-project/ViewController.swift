@@ -10,12 +10,10 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
-class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, SliderViewDelegate {
+class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, PitchTempoViewControllerDelegate {
 
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playbackSlider: PlaySlider!
-    @IBOutlet weak var pitchSlider: SliderView!
-    @IBOutlet weak var tempoSlider: SliderView!
 
     var displayLink: CADisplayLink?
     var mediaPicker: MPMediaPickerController?
@@ -38,15 +36,11 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
     var pitch: Int = 0 {
         didSet {
             timePitchNode.pitch = Float(pitch * 100)
-            pitchSlider.text = pitch >= 0
-                ? "+\(pitch)"
-                : "\(pitch)"
         }
     }
     var tempo: Int = 100 {
         didSet {
             timePitchNode.rate = Float(tempo) / 100
-            tempoSlider.text = "\(tempo)%"
         }
     }
     var sampleRate: Double? = nil
@@ -70,8 +64,6 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         super.viewDidLoad()
 
         playbackSlider.delegate = self
-        pitchSlider.delegate = self
-        tempoSlider.delegate = self
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
         displayLink!.paused = true
@@ -101,6 +93,14 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         // Dispose of any resources that can be recreated.
     }
 
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let pitchTempoViewController = segue.destinationViewController as? PitchTempoViewController {
+            pitchTempoViewController.delegate = self
+            pitchTempoViewController.pitch = pitch
+            pitchTempoViewController.tempo = tempo
+        }
+    }
+
     @IBAction func addSongButtonPressed(sender: UIButton) {
         mediaPicker = MPMediaPickerController(mediaTypes: .AnyAudio)
 
@@ -112,12 +112,12 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         }
     }
 
-    @IBAction func pitchSliderChanged(sender: SliderView) {
-        pitch = sender.value
+    @IBAction func pitchChanged(value: Int) {
+        pitch = value
     }
 
-    @IBAction func tempoSliderChanged(sender: SliderView) {
-        tempo = sender.value
+    @IBAction func tempoChanged(value: Int) {
+        tempo = value
     }
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
@@ -140,20 +140,6 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
 
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double) {
         seek(value)
-    }
-
-    func sliderViewDidChangeValue(slider: SliderView) {
-        switch (slider) {
-        case pitchSlider:
-            pitch = pitchSlider.value
-        case tempoSlider:
-            tempo = tempoSlider.value
-        default:
-            print("Unknown slider. How do I throw real errors?")
-        }
-    }
-
-    func sliderViewDidTap(slider: SliderView) {
     }
 
     func playFile() {

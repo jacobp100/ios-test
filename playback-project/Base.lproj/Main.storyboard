@@ -35,8 +35,91 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
+                                <rect key="frame" x="20" y="132" width="374" height="48"/>
+                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="1rc-ya-jrZ"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
+                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aj1-cU-Zhf">
+                                <rect key="frame" x="20" y="224" width="374" height="492"/>
+                                <connections>
+                                    <segue destination="W5F-na-AVc" kind="embed" identifier="PitchTempo" id="ex8-IY-ubs"/>
+                                </connections>
+                            </containerView>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
+                                <rect key="frame" x="79" y="121" width="118" height="31"/>
+                            </slider>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="a4Q-4O-PXN">
+                                <rect key="frame" x="20" y="188" width="374" height="29"/>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                </segments>
+                            </segmentedControl>
+                        </subviews>
+                        <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="1gT-3C-axS"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="D7h-iU-1YW"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
+                            <constraint firstItem="a4Q-4O-PXN" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="GhP-F4-YmF"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="KF1-pO-GkD"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
+                            <constraint firstItem="a4Q-4O-PXN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="N7t-5F-Zgl"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
+                            <constraint firstItem="a4Q-4O-PXN" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="fjt-Ix-O69"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="a4Q-4O-PXN" secondAttribute="bottom" constant="8" symbolic="YES" id="mk3-GR-tCp"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="a4Q-4O-PXN" secondAttribute="bottom" constant="8" symbolic="YES" id="mw0-Th-Wfr"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="poa-Yd-ViE"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aj1-cU-Zhf" secondAttribute="bottom" constant="20" id="sqc-iD-cnj"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yrz-8r-JMO"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="zLE-MP-HDJ"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="GID-aa-cBQ"/>
+                                <exclude reference="aq0-Dk-AM3"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
+                    <connections>
+                        <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
+                        <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>
+                        <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
+                        <outlet property="tempoSlider" destination="qki-nF-ZFM" id="MQ4-kg-5YT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="380" y="311"/>
+        </scene>
+        <!--Pitch Tempo View Controller-->
+        <scene sceneID="Clz-gO-t1M">
+            <objects>
+                <viewController id="W5F-na-AVc" customClass="PitchTempoViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4qK-md-zTw">
+                        <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="qki-nF-ZFM" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="223" y="188" width="171" height="528"/>
+                                <rect key="frame" x="124" y="0.0" width="100" height="240"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -65,7 +148,7 @@
                                 </connections>
                             </view>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="1zY-mU-nTF" customClass="SliderView" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="188" width="171" height="528"/>
+                                <rect key="frame" x="16" y="0.0" width="100" height="240"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -90,68 +173,29 @@
                                     <action selector="pitchSliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2CA-kc-FSm"/>
                                 </connections>
                             </view>
-                            <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="132" width="374" height="48"/>
-                                <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="1rc-ya-jrZ"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="color" keyPath="color">
-                                        <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </view>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
-                                <rect key="frame" x="79" y="121" width="118" height="31"/>
-                            </slider>
                         </subviews>
-                        <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="32" id="42a-Dn-HEK"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="qki-nF-ZFM" secondAttribute="trailing" id="6FI-Ys-Q4t"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="D7h-iU-1YW"/>
-                            <constraint firstAttribute="leadingMargin" secondItem="1zY-mU-nTF" secondAttribute="leading" id="DgL-ed-8Dq"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
-                            <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="KF1-pO-GkD"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
-                            <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="UbQ-Sm-El0"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="height" secondItem="1zY-mU-nTF" secondAttribute="height" id="bjp-9v-tGH"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="kQg-sI-v4J"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="1zY-mU-nTF" secondAttribute="bottom" constant="20" id="srp-sf-n5y"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="qki-nF-ZFM" secondAttribute="bottom" constant="20" id="xHO-12-Hd8"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yrz-8r-JMO"/>
-                            <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="zo8-No-xH1"/>
+                            <constraint firstItem="1zY-mU-nTF" firstAttribute="leading" secondItem="4qK-md-zTw" secondAttribute="leadingMargin" id="KkV-Jb-WEc"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="1zY-mU-nTF" secondAttribute="bottom" id="Ory-CA-GSX"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="top" secondItem="4qK-md-zTw" secondAttribute="topMargin" id="Y3d-L3-krV"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="leading" secondItem="1zY-mU-nTF" secondAttribute="trailing" constant="8" symbolic="YES" id="a3a-PR-HHD"/>
+                            <constraint firstItem="1zY-mU-nTF" firstAttribute="top" secondItem="4qK-md-zTw" secondAttribute="topMargin" id="cSh-Vs-Jf3"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="trailing" secondItem="4qK-md-zTw" secondAttribute="trailingMargin" id="e2G-f3-ETT"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="width" secondItem="1zY-mU-nTF" secondAttribute="width" id="pWq-Qs-gHl"/>
+                            <constraint firstItem="qki-nF-ZFM" firstAttribute="bottom" secondItem="4qK-md-zTw" secondAttribute="bottomMargin" id="uIC-de-yb7"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="zLE-MP-HDJ"/>
-                            </mask>
-                            <mask key="constraints">
-                                <exclude reference="GID-aa-cBQ"/>
-                                <exclude reference="aq0-Dk-AM3"/>
-                            </mask>
-                        </variation>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="240" height="240"/>
                     <connections>
-                        <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
-                        <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>
-                        <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
-                        <outlet property="tempoSlider" destination="qki-nF-ZFM" id="MQ4-kg-5YT"/>
+                        <outlet property="pitchSlider" destination="1zY-mU-nTF" id="ybA-EH-L4b"/>
+                        <outlet property="tempoSlider" destination="qki-nF-ZFM" id="ofz-B0-KIH"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="73X-e2-RaL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="380" y="311"/>
+            <point key="canvasLocation" x="859" y="167"/>
         </scene>
     </scenes>
 </document>
