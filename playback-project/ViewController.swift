@@ -10,7 +10,7 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
-class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate {
+class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, SliderViewDelegate {
 
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playbackSlider: PlaySlider!
@@ -19,7 +19,19 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
 
     var displayLink: CADisplayLink?
     var mediaPicker: MPMediaPickerController?
-    var audioFile: AVAudioFile?
+    var audioFile: AVAudioFile? {
+        didSet {
+            if let playbackAudioFile = audioFile {
+                sampleRate = playbackAudioFile.processingFormat.sampleRate
+                totalDuration = Double(playbackAudioFile.length) / sampleRate!
+            } else {
+                sampleRate = nil
+                totalDuration = nil
+                currentTime = nil
+                currentTimeOffset = nil
+            }
+        }
+    }
     var audioEngine = AVAudioEngine()
     var audioPlayerNode = AVAudioPlayerNode()
     var timePitchNode = AVAudioUnitTimePitch()
@@ -41,7 +53,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
     var totalDuration: Double? = nil {
         didSet {
             if let totalDuration = totalDuration {
-                playbackSlider.maximum = totalDuration
+                playbackSlider.totalDuration = totalDuration
             }
         }
     }
@@ -49,7 +61,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
     var currentTime: Double? = nil {
         didSet {
             if let currentTime = currentTime, currentTimeOffset = currentTimeOffset {
-                playbackSlider.value = currentTime + currentTimeOffset
+                playbackSlider.currentTime = currentTime + currentTimeOffset
             }
         }
     }
@@ -58,6 +70,8 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         super.viewDidLoad()
 
         playbackSlider.delegate = self
+        pitchSlider.delegate = self
+        tempoSlider.delegate = self
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
         displayLink!.paused = true
@@ -80,9 +94,6 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
 
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
-
-        tempoSlider.maximum = 100000
-        tempoSlider.step = 10000
     }
 
     override func didReceiveMemoryWarning() {
@@ -117,7 +128,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
     }
 
-    func playSliderDidTogglePlaying() {
+    func playSliderDidTogglePlaying(playSlider: PlaySlider) {
         if audioPlayerNode.playing {
             audioPlayerNode.pause()
         } else if audioEngine.running {
@@ -127,24 +138,36 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         }
     }
 
-    func playSliderValueDidChange(value: Double) {
+    func playSliderValueDidChange(playSlider: PlaySlider, value: Double) {
         seek(value)
     }
 
-    func playFile() {
-        if !audioEngine.running {
-            try! audioEngine.start()
+    func sliderViewDidChangeValue(slider: SliderView) {
+        switch (slider) {
+        case pitchSlider:
+            pitch = pitchSlider.value
+        case tempoSlider:
+            tempo = tempoSlider.value
+        default:
+            print("Unknown slider. How do I throw real errors?")
         }
+    }
 
+    func sliderViewDidTap(slider: SliderView) {
+    }
+
+    func playFile() {
         seek(0)
     }
 
     func seek(time: Double) {
+        if !audioEngine.running {
+            try! audioEngine.start()
+        }
+
         audioPlayerNode.stop()
 
-        let playbackSampleRate = sampleRate ?? 0
-
-        if time < totalDuration ?? Double.infinity || playbackSampleRate == 0 {
+        if let playbackSampleRate = sampleRate where time < totalDuration ?? Double.infinity {
             audioPlayerNode.scheduleSegment(
                 audioFile!,
                 startingFrame: AVAudioFramePosition(playbackSampleRate * time),
@@ -154,19 +177,13 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
             )
             audioPlayerNode.play()
 
-            let zeroAudioTime = audioPlayerNode.playerTimeForNodeTime(audioPlayerNode.lastRenderTime!)!
-            sampleRate = zeroAudioTime.sampleRate
             currentTimeOffset = time
             currentTime = 0
-            totalDuration = (time + Double(audioFile!.length)) / sampleRate!
 
             displayLink!.paused = false
         } else {
             audioPlayerNode.stop()
-            sampleRate = nil
-            currentTimeOffset = nil
-            currentTime = nil
-            totalDuration = nil
+            audioFile = nil
         }
     }
 

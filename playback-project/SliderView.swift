@@ -9,6 +9,11 @@
 import UIKit
 import Foundation
 
+protocol SliderViewDelegate {
+    func sliderViewDidTap(slider: SliderView)
+    func sliderViewDidChangeValue(slider: SliderView)
+}
+
 @IBDesignable
 class SliderView: UIControl {
 
@@ -35,6 +40,8 @@ class SliderView: UIControl {
     var title: String = "" { didSet { titleLabel.text = title.uppercaseString } }
     @IBInspectable
     var text: String = "" { didSet { valueLabel.text = text } }
+
+    var delegate: SliderViewDelegate?
 
     private var defaultValue: Int!
 
@@ -162,12 +169,12 @@ class SliderView: UIControl {
         line.moveToPoint(CGPoint(
             x: arcCenter.x + cos(startAngle) * radius,
             y: arcCenter.y - sin(startAngle) * radius
-            ))
+        ))
         line.addLineToPoint(arcCenter)
         line.addLineToPoint(CGPoint(
             x: arcCenter.x + cos(endAngle) * radius,
             y: arcCenter.y - sin(endAngle) * radius
-            ))
+        ))
 
         return line
     }
@@ -183,17 +190,16 @@ class SliderView: UIControl {
                 inView: self
             )
             incrementBy(Int(change))
-            sendActionsForControlEvents(.ValueChanged)
         }
     }
 
     func defaultAction(sender: AnyObject) {
-
+        delegate?.sliderViewDidTap(self)
     }
 
     func incrementBy(inputValue: Int) {
         value = max(min(value + inputValue * step, maximum), minimum)
-        sendActionsForControlEvents(.ValueChanged)
+        delegate?.sliderViewDidChangeValue(self)
     }
 
     func increment(sender: AnyObject) {
