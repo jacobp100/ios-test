@@ -135,10 +135,14 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
             break
         }
 
+        containerView.subviews.forEach { $0.removeFromSuperview() }
+
+        addChildViewController(destination)
+
         destination.view.frame = CGRect(
-            x: 0,
+            x: 40, // FIXME
             y: 0,
-            width: containerView.frame.size.width,
+            width: containerView.frame.size.width - 80,
             height: containerView.frame.size.height
         )
         containerView.addSubview(destination.view)
