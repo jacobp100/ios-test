@@ -9,8 +9,8 @@
 import UIKit
 
 protocol PitchTempoViewControllerDelegate {
-    func pitchChanged(value: Int)
-    func tempoChanged(value: Int)
+    func pitchTempoPitchChanged(value: Int)
+    func pitchTempoTempoChanged(value: Int)
 }
 
 class PitchTempoViewController: UIViewController, SliderViewDelegate {
@@ -20,14 +20,14 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
 
     var pitch: Int = 0 {
         didSet {
-            setPitchSliderText()
-            delegate?.pitchChanged(pitch)
+            setPitchSliderProperties()
+            delegate?.pitchTempoPitchChanged(pitch)
         }
     }
     var tempo: Int = 100 {
         didSet {
-            setTempoSliderText()
-            delegate?.tempoChanged(tempo)
+            setTempoSliderProperties()
+            delegate?.pitchTempoTempoChanged(tempo)
         }
     }
 
@@ -39,8 +39,8 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
         pitchSlider!.delegate = self
         tempoSlider!.delegate = self
 
-        setPitchSliderText()
-        setTempoSliderText()
+        setPitchSliderProperties()
+        setTempoSliderProperties()
     }
 
     override func didReceiveMemoryWarning() {
@@ -61,24 +61,16 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
     func sliderViewDidTap(slider: SliderView) {
     }
 
-    func setPitchSliderText() {
-        pitchSlider?.text = pitch >= 0
-            ? "+\(pitch)"
-            : "\(pitch)"
+    func setPitchSliderProperties() {
+        let pitchFormatter = NSNumberFormatter()
+        pitchFormatter.positivePrefix = "+"
+        pitchSlider?.text = pitchFormatter.stringFromNumber(pitch)!
+        pitchSlider?.value = pitch
     }
 
-    func setTempoSliderText() {
+    func setTempoSliderProperties() {
         tempoSlider?.text = "\(tempo)%"
+        tempoSlider?.value = tempo
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

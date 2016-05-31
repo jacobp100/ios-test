@@ -10,8 +10,14 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
+enum DetailViewController: Int {
+    case Playlist = 0
+    case PitchTempo = 1
+}
+
 class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, PitchTempoViewControllerDelegate {
 
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playbackSlider: PlaySlider!
 
@@ -59,6 +65,10 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
             }
         }
     }
+    let viewControllerReferences: [DetailViewController:String] = [
+        .Playlist: "PlaylistViewController",
+        .PitchTempo: "PitchTempoViewController"
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,20 +95,14 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         audioEngine.connect(audioPlayerNode, to: timePitchNode, format: nil)
         audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
 
+        setDetailView(1)
+
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let pitchTempoViewController = segue.destinationViewController as? PitchTempoViewController {
-            pitchTempoViewController.delegate = self
-            pitchTempoViewController.pitch = pitch
-            pitchTempoViewController.tempo = tempo
-        }
     }
 
     @IBAction func addSongButtonPressed(sender: UIButton) {
@@ -112,11 +116,40 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         }
     }
 
-    @IBAction func pitchChanged(value: Int) {
+    @IBAction func selectedViewChanged(sender: UISegmentedControl) {
+        setDetailView(sender.selectedSegmentIndex)
+    }
+
+    func setDetailView(index: Int) {
+        let storyboardType = DetailViewController(rawValue: index)!
+        let reference = viewControllerReferences[storyboardType]!
+        let destination = storyboard!.instantiateViewControllerWithIdentifier(reference)
+
+        switch storyboardType {
+        case .PitchTempo:
+            let pitchTempo = destination as! PitchTempoViewController
+            pitchTempo.delegate = self
+            pitchTempo.pitch = pitch
+            pitchTempo.tempo = tempo
+        default:
+            break
+        }
+
+        destination.view.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: containerView.frame.size.width,
+            height: containerView.frame.size.height
+        )
+        containerView.addSubview(destination.view)
+        destination.didMoveToParentViewController(self)
+    }
+
+    func pitchTempoPitchChanged(value: Int) {
         pitch = value
     }
 
-    @IBAction func tempoChanged(value: Int) {
+    func pitchTempoTempoChanged(value: Int) {
         tempo = value
     }
 

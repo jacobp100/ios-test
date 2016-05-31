@@ -18,28 +18,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ezg-zw-f3a">
-                                <rect key="frame" x="20" y="28" width="374" height="30"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <state key="normal" title="Add Song">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="addSongButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5ow-rc-0j6"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Star Wars" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nsO-Eg-AVp">
-                                <rect key="frame" x="20" y="66" width="374" height="58"/>
+                                <rect key="frame" x="20" y="40" width="374" height="58"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="48"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="132" width="374" height="48"/>
+                                <rect key="frame" x="20" y="118" width="374" height="56"/>
                                 <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="48" id="1rc-ya-jrZ"/>
+                                    <constraint firstAttribute="height" constant="56" id="1rc-ya-jrZ"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="color">
@@ -48,42 +38,41 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aj1-cU-Zhf">
-                                <rect key="frame" x="20" y="224" width="374" height="492"/>
+                                <rect key="frame" x="0.0" y="246" width="414" height="490"/>
                                 <connections>
-                                    <segue destination="W5F-na-AVc" kind="embed" identifier="PitchTempo" id="ex8-IY-ubs"/>
+                                    <segue destination="qtM-9g-XiU" kind="embed" id="JQ3-Wt-VHL"/>
                                 </connections>
                             </containerView>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="a4Q-4O-PXN">
-                                <rect key="frame" x="20" y="188" width="374" height="29"/>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="a4Q-4O-PXN">
+                                <rect key="frame" x="20" y="210" width="374" height="29"/>
                                 <segments>
-                                    <segment title="First"/>
-                                    <segment title="Second"/>
+                                    <segment title="Playlist"/>
+                                    <segment title="Pitch &amp; Tempo"/>
                                 </segments>
+                                <connections>
+                                    <action selector="selectedViewChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="ITy-UI-jns"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="0.047058823529411764" green="0.13725490196078433" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="1gT-3C-axS"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2dn-qN-LUl"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="D7h-iU-1YW"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="E4T-Fm-FUg"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="1gT-3C-axS"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="EQt-fj-pIZ"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
                             <constraint firstItem="a4Q-4O-PXN" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="GhP-F4-YmF"/>
-                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="8" id="KF1-pO-GkD"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="Ezg-zw-f3a" secondAttribute="bottom" constant="8" symbolic="YES" id="Mlx-UK-Oes"/>
+                            <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="20" id="KF1-pO-GkD"/>
                             <constraint firstItem="a4Q-4O-PXN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="N7t-5F-Zgl"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
-                            <constraint firstItem="a4Q-4O-PXN" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="8" symbolic="YES" id="fjt-Ix-O69"/>
+                            <constraint firstItem="a4Q-4O-PXN" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="36" id="fjt-Ix-O69"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="a4Q-4O-PXN" secondAttribute="bottom" constant="8" symbolic="YES" id="mk3-GR-tCp"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="a4Q-4O-PXN" secondAttribute="bottom" constant="8" symbolic="YES" id="mw0-Th-Wfr"/>
-                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="poa-Yd-ViE"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aj1-cU-Zhf" secondAttribute="bottom" constant="20" id="sqc-iD-cnj"/>
-                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="uju-aM-6hM"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="poa-Yd-ViE"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aj1-cU-Zhf" secondAttribute="bottom" id="sqc-iD-cnj"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yrz-8r-JMO"/>
@@ -100,6 +89,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <connections>
+                        <outlet property="containerView" destination="aj1-cU-Zhf" id="zsJ-fk-brX"/>
                         <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
                         <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>
                         <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
@@ -110,10 +100,14 @@
             </objects>
             <point key="canvasLocation" x="380" y="311"/>
         </scene>
-        <!--Pitch Tempo View Controller-->
+        <!--Pitch and Tempo-->
         <scene sceneID="Clz-gO-t1M">
             <objects>
-                <viewController id="W5F-na-AVc" customClass="PitchTempoViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PitchTempoViewController" title="Pitch and Tempo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="W5F-na-AVc" customClass="PitchTempoViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="AR8-NT-wLD"/>
+                        <viewControllerLayoutGuide type="bottom" id="n2j-dw-iVP"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="4qK-md-zTw">
                         <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -186,6 +180,7 @@
                             <constraint firstItem="qki-nF-ZFM" firstAttribute="bottom" secondItem="4qK-md-zTw" secondAttribute="bottomMargin" id="uIC-de-yb7"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="vfO-8b-sAp"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="240" height="240"/>
                     <connections>
@@ -195,7 +190,44 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="73X-e2-RaL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="859" y="167"/>
+            <point key="canvasLocation" x="853" y="379"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="Rsv-TF-8t0">
+            <objects>
+                <viewController storyboardIdentifier="PlaylistViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qtM-9g-XiU" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="XOH-72-cO7"/>
+                        <viewControllerLayoutGuide type="bottom" id="WX7-bC-5lF"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="onh-2G-bZZ">
+                        <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ezg-zw-f3a">
+                                <rect key="frame" x="16" y="20" width="208" height="30"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal" title="Add Song">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="addSongButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="5ow-rc-0j6"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.047058823530000002" green="0.13725490200000001" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="trailing" secondItem="onh-2G-bZZ" secondAttribute="trailingMargin" id="MGg-mx-OeX"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="leading" secondItem="onh-2G-bZZ" secondAttribute="leadingMargin" id="Q6u-Pe-fAw"/>
+                            <constraint firstItem="Ezg-zw-f3a" firstAttribute="top" secondItem="XOH-72-cO7" secondAttribute="bottom" constant="20" id="uXL-EC-Ygg"/>
+                        </constraints>
+                    </view>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    <size key="freeformSize" width="240" height="240"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0vj-ZF-5EH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="853" y="83"/>
         </scene>
     </scenes>
 </document>
