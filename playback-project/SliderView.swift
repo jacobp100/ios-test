@@ -22,6 +22,9 @@ class SliderView: UIControl {
         didSet {
             titleLabel.textColor = color
             valueLabel.textColor = color
+            defaultButton.strokeColor = color
+            incrementButton.strokeColor = color
+            decrementButton.strokeColor = color
         }
     }
     @IBInspectable

@@ -19,6 +19,7 @@
 		162FF27F1CE75B9D00939860 /* playback_projectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162FF27E1CE75B9D00939860 /* playback_projectUITests.swift */; };
 		164CC2431CECD6D70045FD77 /* PlaySlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164CC2421CECD6D70045FD77 /* PlaySlider.swift */; };
 		166FD58E1CFE1F8800632C1F /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */; };
+		16C36FFE1CFF7691000D6DD3 /* DarkTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */; };
 		16E65E671CF632F4002849BD /* ShapeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E65E661CF632F4002849BD /* ShapeButton.swift */; };
 		16E997B31CFCD4EA00C6CC12 /* PitchTempoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		162FF2801CE75B9D00939860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		164CC2421CECD6D70045FD77 /* PlaySlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaySlider.swift; sourceTree = "<group>"; };
 		166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
+		16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarkTabBarController.swift; sourceTree = "<group>"; };
 		16E65E661CF632F4002849BD /* ShapeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShapeButton.swift; sourceTree = "<group>"; };
 		16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PitchTempoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +132,7 @@
 				161B26A61CE8BF9400EAD5FC /* SliderView.swift */,
 				164CC2421CECD6D70045FD77 /* PlaySlider.swift */,
 				16E65E661CF632F4002849BD /* ShapeButton.swift */,
+				16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */,
 				162FF2651CE75B9D00939860 /* Assets.xcassets */,
 				162FF2671CE75B9D00939860 /* LaunchScreen.storyboard */,
 				162FF26A1CE75B9D00939860 /* Info.plist */,
@@ -294,6 +297,7 @@
 				16E997B31CFCD4EA00C6CC12 /* PitchTempoViewController.swift in Sources */,
 				162FF2611CE75B9D00939860 /* ViewController.swift in Sources */,
 				162FF25F1CE75B9D00939860 /* AppDelegate.swift in Sources */,
+				16C36FFE1CFF7691000D6DD3 /* DarkTabBarController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

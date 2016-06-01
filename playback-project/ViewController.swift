@@ -10,12 +10,8 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
-enum DetailViewController: Int {
-    case Playlist = 0
-    case PitchTempo = 1
-}
 
-class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, PitchTempoViewControllerDelegate {
+class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, PlaylistViewControllerDelegate, PitchTempoViewControllerDelegate, UITabBarControllerDelegate {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var songLabel: UILabel!
@@ -65,10 +61,6 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
             }
         }
     }
-    let viewControllerReferences: [DetailViewController:String] = [
-        .Playlist: "PlaylistViewController",
-        .PitchTempo: "PitchTempoViewController"
-    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,14 +87,19 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         audioEngine.connect(audioPlayerNode, to: timePitchNode, format: nil)
         audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
 
-        setDetailView(1)
-
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "embed" {
+            let tabbarView = segue.destinationViewController as! UITabBarController
+            tabbarView.delegate = self
+        }
     }
 
     @IBAction func addSongButtonPressed(sender: UIButton) {
@@ -116,37 +113,17 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         }
     }
 
-    @IBAction func selectedViewChanged(sender: UISegmentedControl) {
-        setDetailView(sender.selectedSegmentIndex)
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        if let playlistViewController = viewController as? PlaylistViewController {
+            playlistViewController.delegate = self
+        } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
+            pitchTempoViewController.pitch = pitch
+            pitchTempoViewController.tempo = tempo
+            pitchTempoViewController.delegate = self
+        }
     }
 
-    func setDetailView(index: Int) {
-        let storyboardType = DetailViewController(rawValue: index)!
-        let reference = viewControllerReferences[storyboardType]!
-        let destination = storyboard!.instantiateViewControllerWithIdentifier(reference)
-
-        switch storyboardType {
-        case .PitchTempo:
-            let pitchTempo = destination as! PitchTempoViewController
-            pitchTempo.delegate = self
-            pitchTempo.pitch = pitch
-            pitchTempo.tempo = tempo
-        default:
-            break
-        }
-
-        containerView.subviews.forEach { $0.removeFromSuperview() }
-
-        addChildViewController(destination)
-
-        destination.view.frame = CGRect(
-            x: 40, // FIXME
-            y: 0,
-            width: containerView.frame.size.width - 80,
-            height: containerView.frame.size.height
-        )
-        containerView.addSubview(destination.view)
-        destination.didMoveToParentViewController(self)
+    func playlistDidSelectItem(sender: PlaylistViewController, item: AnyObject) {
     }
 
     func pitchTempoPitchChanged(value: Int) {
