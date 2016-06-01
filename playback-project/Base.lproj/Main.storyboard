@@ -19,14 +19,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Star Wars" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nsO-Eg-AVp">
-                                <rect key="frame" x="20" y="40" width="374" height="58"/>
+                                <rect key="frame" x="20" y="56" width="374" height="58"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="48"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
-                                <rect key="frame" x="20" y="118" width="374" height="56"/>
+                                <rect key="frame" x="20" y="134" width="374" height="56"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="56" id="1rc-ya-jrZ"/>
@@ -38,7 +38,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aj1-cU-Zhf">
-                                <rect key="frame" x="0.0" y="194" width="414" height="542"/>
+                                <rect key="frame" x="0.0" y="210" width="414" height="526"/>
                                 <color key="tintColor" red="0.68627450980000004" green="0.85882352939999995" blue="0.0039215686269999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <segue destination="NZT-ea-YEk" kind="embed" identifier="embed" id="9K5-hR-a6w"/>
@@ -52,7 +52,7 @@
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="1gT-3C-axS"/>
-                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="EQt-fj-pIZ"/>
+                            <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="36" id="EQt-fj-pIZ"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="20" id="KF1-pO-GkD"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="20" id="YWd-cv-jdP"/>

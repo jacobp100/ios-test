@@ -17,11 +17,16 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var tableView: UITableView?
 
     var playlist: [String] = [] { didSet { tableView?.reloadData() } }
+    var currentItem: Int = 0 { didSet { tableView?.reloadData() } }
     var delegate: PlaylistViewControllerDelegate?
 
     private let actionTitles = [
         "Add from Library",
         "Clear Playlist"
+    ]
+    private let actionImages = [
+        "tableview-add",
+        "tableview-clear"
     ]
 
     override func viewDidLoad() {
@@ -64,12 +69,10 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
 
         if indexPath.section == 0 {
             cell.textLabel?.text = actionTitles[indexPath.row]
-            cell.imageView?.image = indexPath.row == 0
-                ? UIImage(named: "tableview-add")
-                : UIImage(named: "tableview-clear")
+            cell.imageView?.image = UIImage(named: actionImages[indexPath.row])
         } else {
             cell.textLabel?.text = playlist[indexPath.row]
-            cell.imageView?.image = indexPath.row == 2
+            cell.imageView?.image = indexPath.row == currentItem
                 ? UIImage(named: "tableview-speaker")
                 : UIImage(named: "tableview-blank")
         }

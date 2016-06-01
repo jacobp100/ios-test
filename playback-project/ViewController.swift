@@ -39,6 +39,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         "Stairway to Heaven",
         "Sweet Child O Mine"
     ]
+    var currentItem = 0
     var pitch: Int = 0 {
         didSet {
             timePitchNode.pitch = Float(pitch * 100)
@@ -127,6 +128,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if let playlistViewController = viewController as? PlaylistViewController {
             playlistViewController.playlist = playlist
+            playlistViewController.currentItem = currentItem
             playlistViewController.delegate = self
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
             pitchTempoViewController.pitch = pitch
