@@ -14,9 +14,9 @@ protocol PlaylistViewControllerDelegate {
 
 class PlaylistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: UITableView?
 
-    var playlist: [String]?
+    var playlist: [String] = [] { didSet { tableView?.reloadData() } }
     var delegate: PlaylistViewControllerDelegate?
 
     private let actionTitles = [
@@ -28,9 +28,9 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = UIColor.clearColor()
+        tableView?.backgroundColor = UIColor.clearColor()
+        tableView?.delegate = self
+        tableView?.dataSource = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,7 +43,7 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? actionTitles.count : 20
+        return section == 0 ? actionTitles.count : playlist.count
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -68,7 +68,7 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
                 ? UIImage(named: "tableview-add")
                 : UIImage(named: "tableview-clear")
         } else {
-            cell.textLabel?.text = "Test: \(indexPath.row)"
+            cell.textLabel?.text = playlist[indexPath.row]
             cell.imageView?.image = indexPath.row == 2
                 ? UIImage(named: "tableview-speaker")
                 : UIImage(named: "tableview-blank")

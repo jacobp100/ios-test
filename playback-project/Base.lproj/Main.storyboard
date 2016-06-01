@@ -27,7 +27,7 @@
                             </label>
                             <view contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zw0-dv-97D" customClass="PlaySlider" customModule="playback_project" customModuleProvider="target">
                                 <rect key="frame" x="20" y="118" width="374" height="56"/>
-                                <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="56" id="1rc-ya-jrZ"/>
                                 </constraints>
@@ -48,7 +48,7 @@
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
                         </subviews>
-                        <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="1gT-3C-axS"/>

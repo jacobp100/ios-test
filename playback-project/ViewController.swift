@@ -35,6 +35,10 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
     var audioEngine = AVAudioEngine()
     var audioPlayerNode = AVAudioPlayerNode()
     var timePitchNode = AVAudioUnitTimePitch()
+    var playlist = [
+        "Stairway to Heaven",
+        "Sweet Child O Mine"
+    ]
     var pitch: Int = 0 {
         didSet {
             timePitchNode.pitch = Float(pitch * 100)
@@ -97,8 +101,15 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "embed" {
-            let tabbarView = segue.destinationViewController as! UITabBarController
-            tabbarView.delegate = self
+            let tabBarController = segue.destinationViewController as! UITabBarController
+            tabBarController.delegate = self
+
+            if let selectedViewController = tabBarController.viewControllers?.first {
+                self.tabBarController(
+                    tabBarController,
+                    didSelectViewController: selectedViewController
+                )
+            }
         }
     }
 
@@ -115,6 +126,7 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
 
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if let playlistViewController = viewController as? PlaylistViewController {
+            playlistViewController.playlist = playlist
             playlistViewController.delegate = self
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
             pitchTempoViewController.pitch = pitch
