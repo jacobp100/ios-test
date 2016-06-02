@@ -16,9 +16,33 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
 
     @IBOutlet weak var tableView: UITableView?
 
-    var playlist: [String] = [] { didSet { tableView?.reloadData() } }
-    var currentItem: Int = 0 { didSet { tableView?.reloadData() } }
-    var delegate: PlaylistViewControllerDelegate?
+    private var kvoContext: UInt8 = 1
+
+    var musicPlayer: MusicPlayer? {
+        didSet {
+            tableView?.reloadData()
+
+            if let previousMusicPlayer = oldValue {
+                previousMusicPlayer.removeObserver(self, forKeyPath: "currentItem")
+                previousMusicPlayer.removeObserver(self, forKeyPath: "playlist")
+            }
+
+            if let currentMusicPlayer = musicPlayer {
+                currentMusicPlayer.addObserver(
+                    self,
+                    forKeyPath: "currentItem",
+                    options: .New,
+                    context: &kvoContext
+                )
+                currentMusicPlayer.addObserver(
+                    self,
+                    forKeyPath: "playlist",
+                    options: .New,
+                    context: &kvoContext
+                )
+            }
+        }
+    }
 
     private let actionTitles = [
         "Add from Library",
@@ -43,12 +67,23 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         // Dispose of any resources that can be recreated.
     }
 
+    override func observeValueForKeyPath(
+        keyPath: String?,
+        ofObject object: AnyObject?,
+                 change: [String : AnyObject]?,
+                 context: UnsafeMutablePointer<Void>
+        ) {
+        tableView?.reloadData()
+    }
+
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? actionTitles.count : playlist.count
+        return section == 0
+            ? actionTitles.count
+            : musicPlayer?.playlist.count ?? 0
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -70,11 +105,15 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         if indexPath.section == 0 {
             cell.textLabel?.text = actionTitles[indexPath.row]
             cell.imageView?.image = UIImage(named: actionImages[indexPath.row])
-        } else {
-            cell.textLabel?.text = playlist[indexPath.row]
-            cell.imageView?.image = indexPath.row == currentItem
-                ? UIImage(named: "tableview-speaker")
-                : UIImage(named: "tableview-blank")
+        } else if let playbackMusicPlayer = musicPlayer {
+            let rowMediaItem = playbackMusicPlayer.playlist[indexPath.row]
+            cell.textLabel?.text = rowMediaItem.title
+
+            if let currentItem = playbackMusicPlayer.currentItem where currentItem.url == rowMediaItem.url {
+                cell.imageView?.image = UIImage(named: "tableview-speaker")
+            } else {
+                cell.imageView?.image = UIImage(named: "tableview-blank")
+            }
         }
 
         return cell

@@ -102,6 +102,27 @@ class PlaySlider: UIControl {
         setColor()
     }
 
+    func playButtonPressed() {
+        delegate?.playSliderDidTogglePlaying(self)
+    }
+
+    func handlePan(recognizer: UIPanGestureRecognizer) {
+        switch recognizer.state {
+        case .Began:
+            isDragging = true
+        case .Ended:
+            delegate?.playSliderValueDidChange(self, value: dragPosition)
+            isDragging = false
+            dragPosition = -1
+        case .Changed:
+            var t = (recognizer.locationInView(self).x - sliderSize * 1.5) / (sliderWidth - sliderSize)
+            t = min(max(t, 0), 1)
+            dragPosition = Double(t) * totalDuration
+        default:
+            break
+        }
+    }
+
     override func layoutSubviews() {
         let width = frame.size.width
         let height = frame.size.height
@@ -166,27 +187,6 @@ class PlaySlider: UIControl {
         nextButton.strokeColor = color
         currentTimeLabel.textColor = color
         totalDurationLabel.textColor = color
-    }
-
-    func playButtonPressed() {
-        delegate?.playSliderDidTogglePlaying(self)
-    }
-
-    func handlePan(recognizer: UIPanGestureRecognizer) {
-        switch recognizer.state {
-        case .Began:
-            isDragging = true
-        case .Ended:
-            delegate?.playSliderValueDidChange(self, value: dragPosition)
-            isDragging = false
-            dragPosition = -1
-        case .Changed:
-            var t = (recognizer.locationInView(self).x - sliderSize * 1.5) / (sliderWidth - sliderSize)
-            t = min(max(t, 0), 1)
-            dragPosition = Double(t) * totalDuration
-        default:
-            break
-        }
     }
 
     func rectForButton() -> CGRect {

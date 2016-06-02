@@ -44,6 +44,13 @@
                                     <segue destination="NZT-ea-YEk" kind="embed" identifier="embed" id="9K5-hR-a6w"/>
                                 </connections>
                             </containerView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sij-7e-sQy">
+                                <rect key="frame" x="0.0" y="209" width="414" height="1"/>
+                                <color key="backgroundColor" red="0.23137254901960785" green="0.23137254901960785" blue="0.23529411764705882" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="M5u-bD-tHR"/>
+                                </constraints>
+                            </view>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="zLE-MP-HDJ">
                                 <rect key="frame" x="79" y="121" width="118" height="31"/>
                             </slider>
@@ -54,11 +61,15 @@
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="1gT-3C-axS"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="36" id="EQt-fj-pIZ"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
+                            <constraint firstItem="sij-7e-sQy" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="Iu1-vy-dmR"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="top" secondItem="nsO-Eg-AVp" secondAttribute="bottom" constant="20" id="KF1-pO-GkD"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="zw0-dv-97D" secondAttribute="bottom" constant="20" id="YWd-cv-jdP"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="sij-7e-sQy" secondAttribute="bottom" id="YlH-p3-uJp"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
+                            <constraint firstItem="sij-7e-sQy" firstAttribute="trailing" secondItem="aj1-cU-Zhf" secondAttribute="trailing" id="drL-1e-VMN"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="poa-Yd-ViE"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="sij-7e-sQy" secondAttribute="trailing" constant="-20" id="sSr-YO-lLU"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aj1-cU-Zhf" secondAttribute="bottom" id="sqc-iD-cnj"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="v4i-2s-fJ7"/>
                             <constraint firstItem="zw0-dv-97D" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="yhc-Di-Std"/>
@@ -71,6 +82,7 @@
                             <mask key="constraints">
                                 <exclude reference="GID-aa-cBQ"/>
                                 <exclude reference="aq0-Dk-AM3"/>
+                                <exclude reference="drL-1e-VMN"/>
                             </mask>
                         </variation>
                     </view>
@@ -79,6 +91,7 @@
                         <outlet property="containerView" destination="aj1-cU-Zhf" id="zsJ-fk-brX"/>
                         <outlet property="pitchSlider" destination="1zY-mU-nTF" id="fAU-zq-CZE"/>
                         <outlet property="playbackSlider" destination="zw0-dv-97D" id="kA3-UP-hpp"/>
+                        <outlet property="separatorConstraint" destination="M5u-bD-tHR" id="qYN-dO-sa8"/>
                         <outlet property="songLabel" destination="nsO-Eg-AVp" id="44G-xs-KSO"/>
                         <outlet property="tempoSlider" destination="qki-nF-ZFM" id="MQ4-kg-5YT"/>
                     </connections>

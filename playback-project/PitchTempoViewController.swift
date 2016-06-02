@@ -8,37 +8,58 @@
 
 import UIKit
 
-protocol PitchTempoViewControllerDelegate {
-    func pitchTempoPitchChanged(value: Int)
-    func pitchTempoTempoChanged(value: Int)
-}
-
 class PitchTempoViewController: UIViewController, SliderViewDelegate {
 
     @IBOutlet weak var pitchSlider: SliderView?
     @IBOutlet weak var tempoSlider: SliderView?
 
-    var pitch: Int = 0 {
-        didSet {
-            setPitchSliderProperties()
-            delegate?.pitchTempoPitchChanged(pitch)
-        }
-    }
-    var tempo: Int = 100 {
-        didSet {
-            setTempoSliderProperties()
-            delegate?.pitchTempoTempoChanged(tempo)
-        }
-    }
+    private var kvoContext: UInt8 = 1
 
-    var delegate: PitchTempoViewControllerDelegate?
+    var musicPlayer: MusicPlayer? {
+        didSet {
+            setProperties()
+
+            if let previousMusicPlayer = oldValue {
+                previousMusicPlayer.removeObserver(self, forKeyPath: "pitch")
+                previousMusicPlayer.removeObserver(self, forKeyPath: "tempo")
+            }
+
+            if let currentMusicPlayer = musicPlayer {
+                currentMusicPlayer.addObserver(
+                    self,
+                    forKeyPath: "pitch",
+                    options: .New,
+                    context: &kvoContext
+                )
+                currentMusicPlayer.addObserver(
+                    self,
+                    forKeyPath: "tempo",
+                    options: .New,
+                    context: &kvoContext
+                )
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         pitchSlider!.delegate = self
         tempoSlider!.delegate = self
+        setProperties()
+    }
 
+    override func observeValueForKeyPath(
+        keyPath: String?,
+        ofObject object: AnyObject?,
+        change: [String : AnyObject]?,
+        context: UnsafeMutablePointer<Void>
+    ) {
+        setProperties()
+    }
+
+
+    func setProperties() {
         setPitchSliderProperties()
         setTempoSliderProperties()
     }
@@ -50,9 +71,9 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
     func sliderViewDidChangeValue(slider: SliderView) {
         switch (slider) {
         case pitchSlider!:
-            pitch = pitchSlider!.value
+            musicPlayer?.pitch = pitchSlider!.value
         case tempoSlider!:
-            tempo = tempoSlider!.value
+            musicPlayer?.tempo = tempoSlider!.value
         default:
             print("Unknown slider. How do I throw real errors?")
         }
@@ -62,15 +83,25 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
     }
 
     func setPitchSliderProperties() {
-        let pitchFormatter = NSNumberFormatter()
-        pitchFormatter.positivePrefix = "+"
-        pitchSlider?.text = pitchFormatter.stringFromNumber(pitch)!
-        pitchSlider?.value = pitch
+        if let pitch = musicPlayer?.pitch {
+            let pitchFormatter = NSNumberFormatter()
+            pitchFormatter.positivePrefix = "+"
+            pitchSlider?.text = pitchFormatter.stringFromNumber(pitch)!
+        } else {
+            pitchSlider?.text = "?"
+        }
+
+        pitchSlider?.value = musicPlayer?.pitch ?? 0
     }
 
     func setTempoSliderProperties() {
-        tempoSlider?.text = "\(tempo)%"
-        tempoSlider?.value = tempo
+        if let tempo = musicPlayer?.tempo {
+            tempoSlider?.text = "\(tempo)%"
+        } else {
+            tempoSlider?.text = "?"
+        }
+
+        tempoSlider?.value = musicPlayer?.tempo ?? 100
     }
 
 }
