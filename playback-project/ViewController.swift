@@ -7,18 +7,16 @@
 //
 
 import UIKit
-import MediaPlayer
 import AVFoundation
 
 
-class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySliderDelegate, UITabBarControllerDelegate {
+class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDelegate {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var songLabel: UILabel!
     @IBOutlet weak var playbackSlider: PlaySlider!
     @IBOutlet weak var separatorConstraint: NSLayoutConstraint!
 
-    private var mediaPicker: MPMediaPickerController?
     private var musicPlayer = MusicPlayer()
     private var displayLink: CADisplayLink?
 
@@ -62,34 +60,12 @@ class ViewController: UIViewController, MPMediaPickerControllerDelegate, PlaySli
         }
     }
 
-    @IBAction func addSongButtonPressed(sender: UIButton) {
-        mediaPicker = MPMediaPickerController(mediaTypes: .AnyAudio)
-
-        if let picker = mediaPicker {
-            picker.delegate = self
-            view.addSubview(picker.view)
-
-            presentViewController(picker, animated: true, completion: nil)
-        }
-    }
-
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         if let playlistViewController = viewController as? PlaylistViewController {
             playlistViewController.musicPlayer = musicPlayer
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
             pitchTempoViewController.musicPlayer = musicPlayer
         }
-    }
-
-    func playlistDidSelectItem(sender: PlaylistViewController, item: AnyObject) {
-    }
-
-    func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
-        songLabel.text = mediaItemCollection.items[0].title
-    }
-
-    func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
-        mediaPicker.dismissViewControllerAnimated(true, completion: nil)
     }
 
     func playSliderDidTogglePlaying(playSlider: PlaySlider) {

@@ -7,12 +7,26 @@
 //
 
 import UIKit
+import MediaPlayer
 
-protocol PlaylistViewControllerDelegate {
-    func playlistDidSelectItem(sender: PlaylistViewController, item: AnyObject)
+enum StaticActionHandler {
+    case AddMediaItems
+    case ClearPlaylist
 }
 
-class PlaylistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class StaticAction {
+    var title: String!
+    var image: String!
+    var action: StaticActionHandler
+
+    init(title: String, image: String, action: StaticActionHandler) {
+        self.title = title
+        self.image = image
+        self.action = action
+    }
+}
+
+class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView?
 
@@ -44,13 +58,10 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
 
-    private let actionTitles = [
-        "Add from Library",
-        "Clear Playlist"
-    ]
-    private let actionImages = [
-        "tableview-add",
-        "tableview-clear"
+    private var mediaPicker: MPMediaPickerController?
+    private let actions: [StaticAction] = [
+        StaticAction(title: "Add from Library", image: "tableview-add", action: .AddMediaItems),
+        StaticAction(title: "Clear Playlist", image: "tableview-clear", action: .ClearPlaylist),
     ]
 
     override func viewDidLoad() {
@@ -82,7 +93,7 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0
-            ? actionTitles.count
+            ? actions.count
             : musicPlayer?.playlist.count ?? 0
     }
 
@@ -103,8 +114,9 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         cell.textLabel?.highlightedTextColor = UIColor.blackColor()
 
         if indexPath.section == 0 {
-            cell.textLabel?.text = actionTitles[indexPath.row]
-            cell.imageView?.image = UIImage(named: actionImages[indexPath.row])
+            let action = actions[indexPath.row]
+            cell.textLabel?.text = action.title
+            cell.imageView?.image = UIImage(named: action.image)
         } else if let playbackMusicPlayer = musicPlayer {
             let rowMediaItem = playbackMusicPlayer.playlist[indexPath.row]
             cell.textLabel?.text = rowMediaItem.title
@@ -117,6 +129,39 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         }
 
         return cell
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if indexPath.section == 0 {
+            switch actions[indexPath.row].action {
+            case .AddMediaItems:
+                showMediaPicker()
+            default:
+                break
+            }
+        }
+    }
+
+    func showMediaPicker() {
+        mediaPicker = MPMediaPickerController(mediaTypes: .AnyAudio)
+
+        if let picker = mediaPicker {
+            picker.delegate = self
+//            view.addSubview(picker.view)
+
+            presentViewController(picker, animated: true, completion: nil)
+            UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.Default
+        }
+    }
+
+    func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
+        // mediaItemCollection.items[0].title
+        UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
+    }
+
+    func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
+        mediaPicker.dismissViewControllerAnimated(true, completion: nil)
+        UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
     }
 
 }
