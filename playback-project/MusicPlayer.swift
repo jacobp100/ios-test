@@ -33,7 +33,7 @@ class MusicFile {
 class MusicPlayer: NSObject {
 
     dynamic var playlist: [MusicItem] = []
-    private(set) dynamic var currentItem: MusicItem?
+    dynamic var currentIndex: Int = -1
     dynamic var pitch: Int = 0 {
         didSet {
             timePitchNode.pitch = Float(pitch * 100)
@@ -42,6 +42,13 @@ class MusicPlayer: NSObject {
     dynamic var tempo: Int = 100 {
         didSet {
             timePitchNode.rate = Float(tempo) / 100
+        }
+    }
+    var currentItem: MusicItem? {
+        get {
+            return currentIndex < playlist.count && currentIndex >= 0
+                ? playlist[currentIndex]
+                : nil
         }
     }
     var totalDuration: Double? = nil
@@ -78,20 +85,26 @@ class MusicPlayer: NSObject {
 
     func addFiles(files: [MusicItem]) {
         playlist.appendContentsOf(files)
-        seek(0)
+    }
+
+    func playAtIndex(index: Int) {
+        if index < playlist.count {
+            currentIndex = index
+            seek(0)
+        }
     }
 
     func play() {
-        if currentItem == nil {
-            currentItem = playlist.first
-        }
-
         seek(0)
     }
 
     func seek(time: Double) {
         if !audioEngine.running {
             try! audioEngine.start()
+        }
+
+        if currentIndex < 0 {
+            currentIndex = 0
         }
 
         audioPlayerNode.stop()
@@ -127,7 +140,7 @@ class MusicPlayer: NSObject {
             )
             audioPlayerNode.play()
         } else {
-            currentItem = nil
+            currentIndex = -1
             sampleRate = nil
             totalDuration = nil
             currentTimeOffset = nil

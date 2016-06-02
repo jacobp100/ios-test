@@ -37,14 +37,14 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
             tableView?.reloadData()
 
             if let previousMusicPlayer = oldValue {
-                previousMusicPlayer.removeObserver(self, forKeyPath: "currentItem")
+                previousMusicPlayer.removeObserver(self, forKeyPath: "currentIndex")
                 previousMusicPlayer.removeObserver(self, forKeyPath: "playlist")
             }
 
             if let currentMusicPlayer = musicPlayer {
                 currentMusicPlayer.addObserver(
                     self,
-                    forKeyPath: "currentItem",
+                    forKeyPath: "currentIndex",
                     options: .New,
                     context: &kvoContext
                 )
@@ -81,9 +81,9 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
     override func observeValueForKeyPath(
         keyPath: String?,
         ofObject object: AnyObject?,
-                 change: [String : AnyObject]?,
-                 context: UnsafeMutablePointer<Void>
-        ) {
+        change: [String : AnyObject]?,
+        context: UnsafeMutablePointer<Void>
+    ) {
         tableView?.reloadData()
     }
 
@@ -120,12 +120,9 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
         } else if let playbackMusicPlayer = musicPlayer {
             let rowMediaItem = playbackMusicPlayer.playlist[indexPath.row]
             cell.textLabel?.text = rowMediaItem.title
-
-            if let currentItem = playbackMusicPlayer.currentItem where currentItem.url == rowMediaItem.url {
-                cell.imageView?.image = UIImage(named: "tableview-speaker")
-            } else {
-                cell.imageView?.image = UIImage(named: "tableview-blank")
-            }
+            cell.imageView?.image = playbackMusicPlayer.currentIndex == indexPath.row
+                ? UIImage(named: "tableview-speaker")
+                : UIImage(named: "tableview-blank")
         }
 
         return cell
@@ -139,6 +136,15 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
             default:
                 break
             }
+        } else {
+            musicPlayer?.playAtIndex(indexPath.row)
+            deselect()
+        }
+    }
+
+    func deselect() {
+        if let selectedPath = tableView?.indexPathForSelectedRow {
+            tableView?.deselectRowAtIndexPath(selectedPath, animated: false)
         }
     }
 
@@ -147,7 +153,6 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
 
         if let picker = mediaPicker {
             picker.delegate = self
-//            view.addSubview(picker.view)
 
             presentViewController(picker, animated: true, completion: nil)
             UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.Default
@@ -156,12 +161,13 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
 
     func mediaPicker(mediaPicker: MPMediaPickerController, didPickMediaItems mediaItemCollection: MPMediaItemCollection) {
         // mediaItemCollection.items[0].title
-        UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
+        mediaPickerDidCancel(mediaPicker)
     }
 
     func mediaPickerDidCancel(mediaPicker: MPMediaPickerController) {
         mediaPicker.dismissViewControllerAnimated(true, completion: nil)
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
+        deselect()
     }
 
 }
