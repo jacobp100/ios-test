@@ -30,6 +30,12 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
             options: .New,
             context: &kvoContext
         )
+        musicPlayer.addObserver(
+            self,
+            forKeyPath: "totalDuration",
+            options: .New,
+            context: &kvoContext
+        )
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
         displayLink!.paused = false
@@ -52,7 +58,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
         musicPlayer.addFiles([demoFile1, demoFile2])
 
-        setSongTitle()
+        handleMediaItemUpdates()
     }
 
     override func didReceiveMemoryWarning() {
@@ -80,7 +86,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         change: [String : AnyObject]?,
         context: UnsafeMutablePointer<Void>
     ) {
-        setSongTitle()
+        handleMediaItemUpdates()
     }
 
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
@@ -88,6 +94,8 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
             playlistViewController.musicPlayer = musicPlayer
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
             pitchTempoViewController.musicPlayer = musicPlayer
+        } else if let jumpListTableViewController = viewController as? JumpListTableViewController {
+            jumpListTableViewController.musicPlayer = musicPlayer
         }
     }
 
@@ -100,7 +108,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         musicPlayer.seek(value)
     }
 
-    func setSongTitle() {
+    func handleMediaItemUpdates() {
         if let currentItem = musicPlayer.currentItem {
             songLabel.text = currentItem.title
         } else if musicPlayer.playlist.count > 0 {
@@ -108,6 +116,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         } else {
             songLabel.text = ""
         }
+        playbackSlider.totalDuration = musicPlayer.totalDuration ?? 1
     }
 
     func updateTime() {

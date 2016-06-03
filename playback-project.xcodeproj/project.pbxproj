@@ -18,6 +18,8 @@
 		162FF2691CE75B9D00939860 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 162FF2671CE75B9D00939860 /* LaunchScreen.storyboard */; };
 		162FF2741CE75B9D00939860 /* playback_projectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162FF2731CE75B9D00939860 /* playback_projectTests.swift */; };
 		162FF27F1CE75B9D00939860 /* playback_projectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162FF27E1CE75B9D00939860 /* playback_projectUITests.swift */; };
+		163376EB1D01F7CD00D56CB7 /* JumpListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163376EA1D01F7CD00D56CB7 /* JumpListTableViewController.swift */; };
+		163376ED1D0205EC00D56CB7 /* PickTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163376EC1D0205EC00D56CB7 /* PickTimeViewController.swift */; };
 		164CC2431CECD6D70045FD77 /* PlaySlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164CC2421CECD6D70045FD77 /* PlaySlider.swift */; };
 		166FD58E1CFE1F8800632C1F /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */; };
 		16C36FFE1CFF7691000D6DD3 /* DarkTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */; };
@@ -60,6 +62,8 @@
 		162FF27A1CE75B9D00939860 /* playback-projectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "playback-projectUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		162FF27E1CE75B9D00939860 /* playback_projectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = playback_projectUITests.swift; sourceTree = "<group>"; };
 		162FF2801CE75B9D00939860 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		163376EA1D01F7CD00D56CB7 /* JumpListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JumpListTableViewController.swift; sourceTree = "<group>"; };
+		163376EC1D0205EC00D56CB7 /* PickTimeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickTimeViewController.swift; sourceTree = "<group>"; };
 		164CC2421CECD6D70045FD77 /* PlaySlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaySlider.swift; sourceTree = "<group>"; };
 		166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
 		16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarkTabBarController.swift; sourceTree = "<group>"; };
@@ -131,6 +135,8 @@
 				162FF2621CE75B9D00939860 /* Main.storyboard */,
 				166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */,
 				16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */,
+				163376EA1D01F7CD00D56CB7 /* JumpListTableViewController.swift */,
+				163376EC1D0205EC00D56CB7 /* PickTimeViewController.swift */,
 				164CC2421CECD6D70045FD77 /* PlaySlider.swift */,
 				161B26A61CE8BF9400EAD5FC /* SliderView.swift */,
 				16E65E661CF632F4002849BD /* ShapeButton.swift */,
@@ -294,7 +300,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				164CC2431CECD6D70045FD77 /* PlaySlider.swift in Sources */,
+				163376EB1D01F7CD00D56CB7 /* JumpListTableViewController.swift in Sources */,
 				16E65E671CF632F4002849BD /* ShapeButton.swift in Sources */,
+				163376ED1D0205EC00D56CB7 /* PickTimeViewController.swift in Sources */,
 				1621BCC31D009E23005D0427 /* MusicPlayer.swift in Sources */,
 				166FD58E1CFE1F8800632C1F /* PlaylistViewController.swift in Sources */,
 				161B26A71CE8BF9500EAD5FC /* SliderView.swift in Sources */,

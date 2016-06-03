@@ -68,7 +68,6 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        tableView?.backgroundColor = UIColor.clearColor()
         tableView?.delegate = self
         tableView?.dataSource = self
     }
@@ -104,9 +103,9 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
 
         let backgroundView = UIView()
         backgroundView.backgroundColor = UIColor(
-            red: 175 / 255,
-            green: 219 / 255,
-            blue: 1 / 255,
+            red: 218 / 255,
+            green: 236 / 255,
+            blue: 87 / 255,
             alpha: 1
         )
         cell.selectedBackgroundView = backgroundView

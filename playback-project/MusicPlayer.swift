@@ -23,10 +23,16 @@ import AVFoundation
 class MusicFile {
     var url: NSURL!
     var file: AVAudioFile!
+    var sampleRate: Double!
+    var frames: Double!
+    var duration: Double!
 
     init(url: NSURL, file: AVAudioFile) {
         self.url = url
         self.file = file
+        self.sampleRate = file.processingFormat.sampleRate
+        self.frames = Double(file.length)
+        self.duration = Double(frames) / sampleRate
     }
 }
 
@@ -51,26 +57,54 @@ class MusicPlayer: NSObject {
                 : nil
         }
     }
-    var totalDuration: Double? = nil
+    var totalDuration: Double? {
+        get {
+            if let playbackCurrentFile = currentFile {
+                return playbackCurrentFile.duration
+            }
+            return nil
+        }
+    }
     var currentTime: Double {
         get {
             var time = currentTimeOffset ?? 0
 
             if let lastRenderTime = audioPlayerNode.lastRenderTime,
                 let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(lastRenderTime),
-                let playbackSampleRate = sampleRate {
-                time += Double(currentAudioTime.sampleTime) / playbackSampleRate
+                let playbackFile = currentFile {
+                time += Double(currentAudioTime.sampleTime) / playbackFile.sampleRate
             }
 
             return time
         }
     }
 
-    private var sampleRate: Double? = nil
     private var audioEngine = AVAudioEngine()
     private var audioPlayerNode = AVAudioPlayerNode()
     private var timePitchNode = AVAudioUnitTimePitch()
-    private var currentFile: MusicFile?
+    private var currentFile: MusicFile? {
+        get {
+            if currentIndex < 0 || currentIndex >= playlist.count {
+                return nil
+            }
+
+            let currentUrl = playlist[currentIndex].url
+
+            if let cachedFile = playlistCache[currentUrl] {
+                return cachedFile
+            } else if let newAudioFile = try? AVAudioFile(forReading: currentUrl) {
+                let musicFile = MusicFile(
+                    url: currentUrl,
+                    file: newAudioFile
+                )
+                playlistCache[currentUrl] = musicFile
+                return musicFile
+            } else {
+                return nil
+            }
+        }
+    }
+    private var playlistCache: [NSURL:MusicFile] = [:]
     private var currentTimeOffset: Double? = nil
 
     override init() {
@@ -109,40 +143,21 @@ class MusicPlayer: NSObject {
 
         audioPlayerNode.stop()
 
-        var audioFile: AVAudioFile? = nil
-
-        if let playbackCurrentItem = currentItem {
-            if let playbackCurrentFile = currentFile where playbackCurrentFile.url == playbackCurrentItem.url {
-                audioFile = playbackCurrentFile.file
-            } else if let newAudioFile = try? AVAudioFile(forReading: playbackCurrentItem.url) {
-                audioFile = newAudioFile
-                currentFile = MusicFile(
-                    url: playbackCurrentItem.url,
-                    file: newAudioFile
-                )
-            }
-        }
-
-        if let playbackAudioFile = audioFile where time < totalDuration ?? Double.infinity {
-            sampleRate = playbackAudioFile.processingFormat.sampleRate
-            totalDuration = Double(playbackAudioFile.length) / sampleRate!
+        if let playbackMusicFile = currentFile where time < playbackMusicFile.duration {
             currentTimeOffset = time
 
-            let startingFrame = sampleRate! * time
-            let endingFrame = Double(playbackAudioFile.length)
+            let startingFrame = playbackMusicFile.sampleRate * time
 
             audioPlayerNode.scheduleSegment(
-                playbackAudioFile,
+                playbackMusicFile.file,
                 startingFrame: AVAudioFramePosition(startingFrame),
-                frameCount: AVAudioFrameCount(endingFrame - startingFrame),
+                frameCount: AVAudioFrameCount(playbackMusicFile.frames - startingFrame),
                 atTime: nil,
                 completionHandler: nil
             )
             audioPlayerNode.play()
         } else {
             currentIndex = -1
-            sampleRate = nil
-            totalDuration = nil
             currentTimeOffset = nil
         }
     }

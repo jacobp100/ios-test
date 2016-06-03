@@ -175,9 +175,10 @@ class PlaySlider: UIControl {
     }
 
     func layoutLabel(label: UILabel, value: Double) {
-        let minutes = Int(value / 60)
-        let seconds = String(format: "%02d", Int(value) % 60)
-        label.text = "\(minutes):\(seconds)"
+        let formatter = NSDateComponentsFormatter()
+        formatter.zeroFormattingBehavior = .Pad
+        formatter.allowedUnits = [.Minute, .Second]
+        label.text = formatter.stringFromTimeInterval(value)
         label.sizeToFit()
     }
 
