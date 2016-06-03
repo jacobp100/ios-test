@@ -30,12 +30,6 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
             options: .New,
             context: &kvoContext
         )
-        musicPlayer.addObserver(
-            self,
-            forKeyPath: "totalDuration",
-            options: .New,
-            context: &kvoContext
-        )
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
         displayLink!.paused = false
@@ -48,15 +42,16 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
         let bundle = NSBundle.mainBundle()
         let demoFile1 = MusicItem(
-            title: "Star Wars 1",
-            url: bundle.URLForResource("starwars", withExtension: "mp3")!
+            title: "May the Force be with You",
+            url: bundle.URLForResource("may-the-force-be-with-you", withExtension: "mp3")!
         )
         let demoFile2 = MusicItem(
-            title: "Star Wars 2",
-            url: bundle.URLForResource("starwars", withExtension: "mp3")!
+            title: "Imperial March",
+            url: bundle.URLForResource("imperial-march", withExtension: "mp3")!
         )
 
         musicPlayer.addFiles([demoFile1, demoFile2])
+        musicPlayer.currentIndex = 0
 
         handleMediaItemUpdates()
     }

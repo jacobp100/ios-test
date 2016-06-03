@@ -20,36 +20,20 @@ import AVFoundation
     }
 }
 
-class MusicFile {
-    var url: NSURL!
-    var file: AVAudioFile!
-    var sampleRate: Double!
-    var frames: Double!
-    var duration: Double!
-
-    init(url: NSURL, file: AVAudioFile) {
-        self.url = url
-        self.file = file
-        self.sampleRate = file.processingFormat.sampleRate
-        self.frames = Double(file.length)
-        self.duration = Double(frames) / sampleRate
-    }
+extension AVAudioFile {
+    var sampleRate: Double { get { return processingFormat.sampleRate } }
+    var frames: Double { get { return Double(length) } }
+    var duration: Double { get { return frames / sampleRate } }
 }
 
 class MusicPlayer: NSObject {
 
     dynamic var playlist: [MusicItem] = []
     dynamic var currentIndex: Int = -1
-    dynamic var pitch: Int = 0 {
-        didSet {
-            timePitchNode.pitch = Float(pitch * 100)
-        }
-    }
-    dynamic var tempo: Int = 100 {
-        didSet {
-            timePitchNode.rate = Float(tempo) / 100
-        }
-    }
+    dynamic var playing: Bool = false
+    dynamic var pitch: Int = 0 { didSet { timePitchNode.pitch = Float(pitch * 100) } }
+    dynamic var tempo: Int = 100 { didSet { timePitchNode.rate = Float(tempo) / 100 } }
+
     var currentItem: MusicItem? {
         get {
             return currentIndex < playlist.count && currentIndex >= 0
@@ -59,7 +43,7 @@ class MusicPlayer: NSObject {
     }
     var totalDuration: Double? {
         get {
-            if let playbackCurrentFile = currentFile {
+            if let playbackCurrentFile = getCurrentFile() {
                 return playbackCurrentFile.duration
             }
             return nil
@@ -67,45 +51,21 @@ class MusicPlayer: NSObject {
     }
     var currentTime: Double {
         get {
-            var time = currentTimeOffset ?? 0
-
-            if let lastRenderTime = audioPlayerNode.lastRenderTime,
-                let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(lastRenderTime),
-                let playbackFile = currentFile {
-                time += Double(currentAudioTime.sampleTime) / playbackFile.sampleRate
-            }
-
-            return time
+            return
+                (seekingTimeOffset ?? 0) +
+                (encueNextTimeOffset ?? 0) +
+                getLastRenderTime()
         }
     }
 
+    private var audioPlayerPlayingSegmentIndex: Int = 0
+    private var audioPlayerPlayingSegment: Bool = false
     private var audioEngine = AVAudioEngine()
     private var audioPlayerNode = AVAudioPlayerNode()
     private var timePitchNode = AVAudioUnitTimePitch()
-    private var currentFile: MusicFile? {
-        get {
-            if currentIndex < 0 || currentIndex >= playlist.count {
-                return nil
-            }
-
-            let currentUrl = playlist[currentIndex].url
-
-            if let cachedFile = playlistCache[currentUrl] {
-                return cachedFile
-            } else if let newAudioFile = try? AVAudioFile(forReading: currentUrl) {
-                let musicFile = MusicFile(
-                    url: currentUrl,
-                    file: newAudioFile
-                )
-                playlistCache[currentUrl] = musicFile
-                return musicFile
-            } else {
-                return nil
-            }
-        }
-    }
-    private var playlistCache: [NSURL:MusicFile] = [:]
-    private var currentTimeOffset: Double? = nil
+    private var playlistCache: [NSURL:AVAudioFile] = [:]
+    private var seekingTimeOffset: Double? = nil
+    private var encueNextTimeOffset: Double? = nil
 
     override init() {
         super.init()
@@ -121,6 +81,11 @@ class MusicPlayer: NSObject {
         playlist.appendContentsOf(files)
     }
 
+    func clearFiles() {
+        playlist.removeAll(keepCapacity: false)
+        playlistCache.removeAll(keepCapacity: false)
+    }
+
     func playAtIndex(index: Int) {
         if index < playlist.count {
             currentIndex = index
@@ -132,33 +97,96 @@ class MusicPlayer: NSObject {
         seek(0)
     }
 
+    func stop() {
+        seekingTimeOffset = getCurrentFile()?.duration
+        audioEngine.stop()
+
+        if audioPlayerPlayingSegment {
+            audioPlayerNode.stop()
+        }
+
+        currentIndex = -1
+        seekingTimeOffset = nil
+        encueNextTimeOffset = nil
+        playing = false
+    }
+
     func seek(time: Double) {
+        audioPlayerPlayingSegmentIndex += 1
+        let currentPlayingIndex = audioPlayerPlayingSegmentIndex
+
         if !audioEngine.running {
             try! audioEngine.start()
+        }
+
+        if audioPlayerPlayingSegment {
+            audioPlayerNode.stop()
+            encueNextTimeOffset = 0
         }
 
         if currentIndex < 0 {
             currentIndex = 0
         }
 
-        audioPlayerNode.stop()
+        if let audioFile = getCurrentFile() where time < audioFile.duration {
+            seekingTimeOffset = time
 
-        if let playbackMusicFile = currentFile where time < playbackMusicFile.duration {
-            currentTimeOffset = time
-
-            let startingFrame = playbackMusicFile.sampleRate * time
+            let startingFrame = audioFile.sampleRate * time
 
             audioPlayerNode.scheduleSegment(
-                playbackMusicFile.file,
+                audioFile,
                 startingFrame: AVAudioFramePosition(startingFrame),
-                frameCount: AVAudioFrameCount(playbackMusicFile.frames - startingFrame),
+                frameCount: AVAudioFrameCount(audioFile.frames - startingFrame),
                 atTime: nil,
-                completionHandler: nil
+                completionHandler: {
+                    [weak this = self] () -> Void in
+                    guard currentPlayingIndex == this?.audioPlayerPlayingSegmentIndex else {
+                        return
+                    }
+
+                    this?.audioPlayerPlayingSegment = false
+                    this?.encueNextTimeOffset = -(this?.getLastRenderTime() ?? 0)
+                    this?.playNext()
+                }
             )
             audioPlayerNode.play()
+            playing = true
+            audioPlayerPlayingSegment = true // Combine with playing?
         } else {
-            currentIndex = -1
-            currentTimeOffset = nil
+            playNext()
+        }
+    }
+
+    private func playNext() {
+        if currentIndex < playlist.count - 1 {
+            currentIndex += 1
+            seek(0)
+        } else {
+            stop()
+        }
+    }
+
+    private func getLastRenderTime() -> Double {
+        if let playbackFile = getCurrentFile(),
+            let lastRenderTime = audioPlayerNode.lastRenderTime,
+            let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(lastRenderTime) {
+            return Double(currentAudioTime.sampleTime) / playbackFile.sampleRate
+        }
+        return 0
+    }
+
+    private func getCurrentFile() -> AVAudioFile? {
+        guard let currentUrl = currentItem?.url else {
+            return nil
+        }
+
+        if let cachedFile = playlistCache[currentUrl] {
+            return cachedFile
+        } else if let audioFile = try? AVAudioFile(forReading: currentUrl) {
+            playlistCache[currentUrl] = audioFile
+            return audioFile
+        } else {
+            return nil
         }
     }
 

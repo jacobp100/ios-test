@@ -25,7 +25,24 @@ class JumpListAction {
 
 class JumpListTableViewController: UITableViewController, PickTimeDelegate {
 
-    var musicPlayer: MusicPlayer?
+    private var kvoContext: UInt8 = 1
+
+    var musicPlayer: MusicPlayer? {
+        didSet {
+            if let previousMusicPlayer = oldValue {
+                previousMusicPlayer.removeObserver(self, forKeyPath: "currentIndex")
+            }
+
+            if let currentMusicPlayer = musicPlayer {
+                currentMusicPlayer.addObserver(
+                    self,
+                    forKeyPath: "currentIndex",
+                    options: .New,
+                    context: &kvoContext
+                )
+            }
+        }
+    }
 
     private var actions: [JumpListAction] = [
         JumpListAction(title: "Bookmark Current Time", action: .AddJumpListItem)
@@ -39,6 +56,16 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+
+    override func observeValueForKeyPath(
+        keyPath: String?,
+        ofObject object: AnyObject?,
+                 change: [String : AnyObject]?,
+                 context: UnsafeMutablePointer<Void>
+        ) {
+        print("Update")
+        tableView.reloadData()
     }
 
     // MARK: - Table view data source
