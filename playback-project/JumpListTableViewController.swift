@@ -29,16 +29,17 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
 
     var musicPlayer: MusicPlayer? {
         didSet {
-            if let previousMusicPlayer = oldValue {
-                previousMusicPlayer.removeObserver(self, forKeyPath: "currentIndex")
+            reload()
+
+            if oldValue != nil {
+                removeEvents()
             }
 
             if let currentMusicPlayer = musicPlayer {
-                currentMusicPlayer.addObserver(
-                    self,
-                    forKeyPath: "currentIndex",
-                    options: .New,
-                    context: &kvoContext
+                addEventListeners(
+                    selector: #selector(JumpListTableViewController.reload),
+                    events: [MusicPlayer.ITEM_DID_CHANGE, MusicPlayer.ITEM_DID_LOAD],
+                    object: currentMusicPlayer
                 )
             }
         }
@@ -64,7 +65,6 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
                  change: [String : AnyObject]?,
                  context: UnsafeMutablePointer<Void>
         ) {
-        print("Update")
         tableView.reloadData()
     }
 
@@ -121,8 +121,8 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
         if segue.identifier == segueIdentifier {
             let pickTimeViewController = segue.destinationViewController as? PickTimeViewController
             pickTimeViewController?.delegate = self
-            print(musicPlayer?.totalDuration)
-            pickTimeViewController?.duration = musicPlayer?.totalDuration ?? 0
+            print(musicPlayer?.currentItem?.duration)
+            pickTimeViewController?.duration = musicPlayer?.currentItem?.duration ?? 0
         }
     }
 
@@ -138,6 +138,12 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     func deselect() {
         if let selectedPath = tableView?.indexPathForSelectedRow {
             tableView?.deselectRowAtIndexPath(selectedPath, animated: false)
+        }
+    }
+
+    func reload() {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.tableView?.reloadData()
         }
     }
 

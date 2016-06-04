@@ -10,80 +10,80 @@ import UIKit
 import MediaPlayer
 import AVFoundation
 
-@objc class MusicItem: NSObject {
-    var title: String!
-    var url: NSURL!
+protocol MusicPlayerFileDelegate {
+    func musicPlayerFileDidLoad(sender: MusicPlayerFile)
+    func musicPlayerFileDidError(sender: MusicPlayerFile)
+    func musicPlayerFileDidFinish(sender: MusicPlayerFile)
+}
 
-    init(title: String, url: NSURL) {
-        self.title = title
-        self.url = url
+protocol MusicPlayerFile: class {
+    var delegate: MusicPlayerFileDelegate? { get set }
+    var title: String { get }
+    var duration: Double { get }
+    var time: Double { get }
+    var loaded: Bool { get }
+    var pitch: Float { get set }
+    var tempo: Float { get set }
+    func enque()
+    func seek(time: Double)
+    func stop()
+}
+
+class MusicPlayer: NSObject, MusicPlayerFileDelegate {
+
+    static let PLAYLIST_DID_CHANGE = "PLAYLIST_DID_CHANGE"
+    static let ITEM_DID_CHANGE = "ITEM_DID_CHANGE"
+    static let ITEM_DID_LOAD = "ITEM_DID_LOAD"
+    static let PITCH_DID_CHANGE = "PITCH_DID_CHANGE"
+    static let TEMPO_DID_CHANGE = "TEMPO_DID_CHANGE"
+
+    var playlist: [MusicPlayerFile] = [] { didSet { emitEvent(MusicPlayer.PLAYLIST_DID_CHANGE) } }
+    var currentIndex: Int = -1 { didSet { emitEvent(MusicPlayer.ITEM_DID_CHANGE) } }
+    var playing: Bool = false
+    var pitch: Int = 0 {
+        didSet {
+            emitEvent(MusicPlayer.PITCH_DID_CHANGE)
+            currentItem?.pitch = realPitchForPitch(pitch)
+        }
     }
-}
+    var tempo: Int = 100 {
+        didSet {
+            emitEvent(MusicPlayer.TEMPO_DID_CHANGE)
+            currentItem?.tempo = realTempoForTempo(tempo)
+        }
+    }
 
-extension AVAudioFile {
-    var sampleRate: Double { get { return processingFormat.sampleRate } }
-    var frames: Double { get { return Double(length) } }
-    var duration: Double { get { return frames / sampleRate } }
-}
-
-class MusicPlayer: NSObject {
-
-    dynamic var playlist: [MusicItem] = []
-    dynamic var currentIndex: Int = -1
-    dynamic var playing: Bool = false
-    dynamic var pitch: Int = 0 { didSet { timePitchNode.pitch = Float(pitch * 100) } }
-    dynamic var tempo: Int = 100 { didSet { timePitchNode.rate = Float(tempo) / 100 } }
-
-    var currentItem: MusicItem? {
+    var currentItem: MusicPlayerFile? {
         get {
             return currentIndex < playlist.count && currentIndex >= 0
                 ? playlist[currentIndex]
                 : nil
         }
     }
-    var totalDuration: Double? {
-        get {
-            if let playbackCurrentFile = getCurrentFile() {
-                return playbackCurrentFile.duration
-            }
-            return nil
-        }
-    }
-    var currentTime: Double {
-        get {
-            return
-                (seekingTimeOffset ?? 0) +
-                (encueNextTimeOffset ?? 0) +
-                getLastRenderTime()
-        }
-    }
 
-    private var audioPlayerPlayingSegmentIndex: Int = 0
-    private var audioPlayerPlayingSegment: Bool = false
-    private var audioEngine = AVAudioEngine()
-    private var audioPlayerNode = AVAudioPlayerNode()
-    private var timePitchNode = AVAudioUnitTimePitch()
-    private var playlistCache: [NSURL:AVAudioFile] = [:]
-    private var seekingTimeOffset: Double? = nil
-    private var encueNextTimeOffset: Double? = nil
+    private struct SeekItem {
+        var item: MusicPlayerFile
+        var time: Double
+    }
+    private var seekItem: SeekItem?
 
     override init() {
         super.init()
-
-        audioEngine.attachNode(audioPlayerNode)
-        audioEngine.attachNode(timePitchNode)
-
-        audioEngine.connect(audioPlayerNode, to: timePitchNode, format: nil)
-        audioEngine.connect(timePitchNode, to: audioEngine.outputNode, format: nil)
     }
 
-    func addFiles(files: [MusicItem]) {
-        playlist.appendContentsOf(files)
+    func addFiles(files: [MusicPlayerFile]) {
+        let enqueFirst = playlist.isEmpty
+
+        playlist += files
+
+        if let firstItem = playlist.first where enqueFirst {
+            firstItem.delegate = self
+            firstItem.enque()
+        }
     }
 
     func clearFiles() {
-        playlist.removeAll(keepCapacity: false)
-        playlistCache.removeAll(keepCapacity: false)
+        playlist = []
     }
 
     func playAtIndex(index: Int) {
@@ -98,62 +98,29 @@ class MusicPlayer: NSObject {
     }
 
     func stop() {
-        seekingTimeOffset = getCurrentFile()?.duration
-        audioEngine.stop()
-
-        if audioPlayerPlayingSegment {
-            audioPlayerNode.stop()
-        }
-
-        currentIndex = -1
-        seekingTimeOffset = nil
-        encueNextTimeOffset = nil
         playing = false
     }
 
     func seek(time: Double) {
-        audioPlayerPlayingSegmentIndex += 1
-        let currentPlayingIndex = audioPlayerPlayingSegmentIndex
-
-        if !audioEngine.running {
-            try! audioEngine.start()
-        }
-
-        if audioPlayerPlayingSegment {
-            audioPlayerNode.stop()
-            encueNextTimeOffset = 0
-        }
-
         if currentIndex < 0 {
             currentIndex = 0
         }
 
-        if let audioFile = getCurrentFile() where time < audioFile.duration {
-            seekingTimeOffset = time
+        guard let item = currentItem else {
+            return
+        }
 
-            let startingFrame = audioFile.sampleRate * time
+        if item.loaded {
+            seekItem = nil
+            item.seek(time)
+            return
+        }
 
-            audioPlayerNode.scheduleSegment(
-                audioFile,
-                startingFrame: AVAudioFramePosition(startingFrame),
-                frameCount: AVAudioFrameCount(audioFile.frames - startingFrame),
-                atTime: nil,
-                completionHandler: {
-                    [weak this = self] () -> Void in
-                    guard currentPlayingIndex == this?.audioPlayerPlayingSegmentIndex else {
-                        return
-                    }
+        seekItem = SeekItem(item: item, time: time)
 
-                    this?.audioPlayerPlayingSegment = false
-                    this?.encueNextTimeOffset = -(this?.getLastRenderTime() ?? 0)
-                    this?.playNext()
-                }
-            )
-            audioPlayerNode.play()
-            playing = true
-            audioPlayerPlayingSegment = true // Combine with playing?
-        } else {
-            playNext()
+        if item.delegate as? MusicPlayer !== self {
+            item.delegate = self
+            item.enque()
         }
     }
 
@@ -166,28 +133,34 @@ class MusicPlayer: NSObject {
         }
     }
 
-    private func getLastRenderTime() -> Double {
-        if let playbackFile = getCurrentFile(),
-            let lastRenderTime = audioPlayerNode.lastRenderTime,
-            let currentAudioTime = audioPlayerNode.playerTimeForNodeTime(lastRenderTime) {
-            return Double(currentAudioTime.sampleTime) / playbackFile.sampleRate
+    func musicPlayerFileDidLoad(sender: MusicPlayerFile) {
+        if let currentSeekItem = seekItem where currentSeekItem.item === sender {
+            emitEvent(MusicPlayer.ITEM_DID_LOAD)
+            seek(currentSeekItem.time)
         }
-        return 0
     }
 
-    private func getCurrentFile() -> AVAudioFile? {
-        guard let currentUrl = currentItem?.url else {
-            return nil
-        }
+    func musicPlayerFileDidError(sender: MusicPlayerFile) {
+        print("Oh no")
+    }
 
-        if let cachedFile = playlistCache[currentUrl] {
-            return cachedFile
-        } else if let audioFile = try? AVAudioFile(forReading: currentUrl) {
-            playlistCache[currentUrl] = audioFile
-            return audioFile
-        } else {
-            return nil
-        }
+    func musicPlayerFileDidFinish(sender: MusicPlayerFile) {
+        playNext()
+    }
+
+    private func realPitchForPitch(pitch: Int) -> Float {
+        return Float(pitch * 100)
+    }
+
+    private func realTempoForTempo(tempo: Int) -> Float {
+        return Float(tempo) / 100
+    }
+
+    private func emitEvent(name: String) {
+        NSNotificationCenter.defaultCenter().postNotificationName(
+            name,
+            object: self
+        )
     }
 
 }

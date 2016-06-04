@@ -10,6 +10,24 @@ import UIKit
 import AVFoundation
 
 
+extension UIViewController {
+    func addEventListeners(selector aSelector: Selector, events: [String], object: AnyObject?) {
+        events.forEach {
+            event in
+            NSNotificationCenter.defaultCenter().addObserver(
+                self,
+                selector: aSelector,
+                name: event,
+                object: object
+            )
+        }
+    }
+    func removeEvents() {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+}
+
+
 class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDelegate {
 
     @IBOutlet weak var containerView: UIView!
@@ -24,11 +42,10 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        musicPlayer.addObserver(
-            self,
-            forKeyPath: "currentIndex",
-            options: .New,
-            context: &kvoContext
+        addEventListeners(
+            selector: #selector(ViewController.handleMediaItemUpdates),
+            events: [MusicPlayer.ITEM_DID_LOAD, MusicPlayer.ITEM_DID_CHANGE],
+            object: musicPlayer
         )
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
@@ -41,11 +58,11 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
 
         let bundle = NSBundle.mainBundle()
-        let demoFile1 = MusicItem(
+        let demoFile1 = MusicPlayerAudioFile(
             title: "May the Force be with You",
             url: bundle.URLForResource("may-the-force-be-with-you", withExtension: "mp3")!
         )
-        let demoFile2 = MusicItem(
+        let demoFile2 = MusicPlayerAudioFile(
             title: "Imperial March",
             url: bundle.URLForResource("imperial-march", withExtension: "mp3")!
         )
@@ -75,18 +92,9 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         }
     }
 
-    override func observeValueForKeyPath(
-        keyPath: String?,
-        ofObject object: AnyObject?,
-        change: [String : AnyObject]?,
-        context: UnsafeMutablePointer<Void>
-    ) {
-        handleMediaItemUpdates()
-    }
-
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
-        if let playlistViewController = viewController as? PlaylistViewController {
-            playlistViewController.musicPlayer = musicPlayer
+        if let playlistTableViewController = viewController as? PlaylistTableViewController {
+            playlistTableViewController.musicPlayer = musicPlayer
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
             pitchTempoViewController.musicPlayer = musicPlayer
         } else if let jumpListTableViewController = viewController as? JumpListTableViewController {
@@ -99,23 +107,25 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     }
 
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double) {
-        playbackSlider.currentTime = value // Stop jumping back whilst loading
+        playbackSlider.time = value // Stop jumping back whilst loading
         musicPlayer.seek(value)
     }
 
     func handleMediaItemUpdates() {
-        if let currentItem = musicPlayer.currentItem {
-            songLabel.text = currentItem.title
-        } else if musicPlayer.playlist.count > 0 {
-            songLabel.text = musicPlayer.playlist[0].title
-        } else {
-            songLabel.text = ""
+        dispatch_async(dispatch_get_main_queue()) {
+            if let currentItem = self.musicPlayer.currentItem {
+                self.songLabel.text = currentItem.title
+            } else if self.musicPlayer.playlist.count > 0 {
+                self.songLabel.text = self.musicPlayer.playlist[0].title
+            } else {
+                self.songLabel.text = ""
+            }
+            self.playbackSlider.duration = self.musicPlayer.currentItem?.duration
         }
-        playbackSlider.totalDuration = musicPlayer.totalDuration ?? 1
     }
 
     func updateTime() {
-        playbackSlider.currentTime = musicPlayer.currentTime
+        playbackSlider.time = musicPlayer.currentItem?.time ?? 0
     }
 
 }

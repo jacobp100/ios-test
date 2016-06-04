@@ -19,23 +19,15 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
         didSet {
             setProperties()
 
-            if let previousMusicPlayer = oldValue {
-                previousMusicPlayer.removeObserver(self, forKeyPath: "pitch")
-                previousMusicPlayer.removeObserver(self, forKeyPath: "tempo")
+            if oldValue != nil {
+                removeEvents()
             }
 
             if let currentMusicPlayer = musicPlayer {
-                currentMusicPlayer.addObserver(
-                    self,
-                    forKeyPath: "pitch",
-                    options: .New,
-                    context: &kvoContext
-                )
-                currentMusicPlayer.addObserver(
-                    self,
-                    forKeyPath: "tempo",
-                    options: .New,
-                    context: &kvoContext
+                addEventListeners(
+                    selector: #selector(PitchTempoViewController.setProperties),
+                    events: [MusicPlayer.PITCH_DID_CHANGE, MusicPlayer.TEMPO_DID_CHANGE],
+                    object: currentMusicPlayer
                 )
             }
         }
@@ -48,16 +40,6 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
         tempoSlider!.delegate = self
         setProperties()
     }
-
-    override func observeValueForKeyPath(
-        keyPath: String?,
-        ofObject object: AnyObject?,
-        change: [String : AnyObject]?,
-        context: UnsafeMutablePointer<Void>
-    ) {
-        setProperties()
-    }
-
 
     func setProperties() {
         setPitchSliderProperties()

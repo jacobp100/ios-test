@@ -167,10 +167,10 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="qtM-9g-XiU" kind="relationship" relationship="viewControllers" id="FoE-YU-kx5"/>
-                        <segue destination="W5F-na-AVc" kind="relationship" relationship="viewControllers" id="ptT-vK-Hof"/>
-                        <segue destination="1EC-wr-Tdj" kind="relationship" relationship="viewControllers" id="XSe-Om-gIh"/>
-                        <segue destination="S1g-xP-9dm" kind="relationship" relationship="viewControllers" id="qAF-NR-K9U"/>
+                        <segue destination="gQr-mi-Tb1" kind="relationship" relationship="viewControllers" id="xDa-U3-rxv"/>
+                        <segue destination="W5F-na-AVc" kind="relationship" relationship="viewControllers" id="zdz-QI-6Yb"/>
+                        <segue destination="1EC-wr-Tdj" kind="relationship" relationship="viewControllers" id="PYT-kY-Qu0"/>
+                        <segue destination="S1g-xP-9dm" kind="relationship" relationship="viewControllers" id="W0z-Co-p3f"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kDC-AG-FJ5" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -428,69 +428,45 @@
             </objects>
             <point key="canvasLocation" x="1255" y="978"/>
         </scene>
-        <!--Playlist-->
-        <scene sceneID="Rsv-TF-8t0">
+        <!--Playlist Table View Controller-->
+        <scene sceneID="eqS-V6-dFj">
             <objects>
-                <viewController storyboardIdentifier="PlaylistViewController" autoresizesArchivedViewToFullSize="NO" title="Playlist" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qtM-9g-XiU" customClass="PlaylistViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="XOH-72-cO7"/>
-                        <viewControllerLayoutGuide type="bottom" id="WX7-bC-5lF"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="onh-2G-bZZ">
+                <tableViewController id="gQr-mi-Tb1" customClass="PlaylistTableViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="aE3-AD-xyM">
                         <rect key="frame" x="0.0" y="0.0" width="240" height="191"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView contentMode="scaleToFill" alwaysBounceVertical="YES" indicatorStyle="white" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Wbl-Fj-pdI">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="191"/>
+                        <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="separatorColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PlaylistCell" textLabel="MNH-cA-NO6" style="IBUITableViewCellStyleDefault" id="STi-39-fxD">
+                                <rect key="frame" x="0.0" y="49.5" width="240" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="STi-39-fxD" id="nPc-0W-Cgr">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MNH-cA-NO6">
+                                            <rect key="frame" x="15" y="0.0" width="210" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                            <color key="textColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="separatorColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="sectionIndexColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="Cell" textLabel="c5s-A0-w1P" style="IBUITableViewCellStyleDefault" id="GuM-4M-8A2">
-                                        <rect key="frame" x="0.0" y="49.5" width="240" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="GuM-4M-8A2" id="2Xs-Og-jqz">
-                                            <rect key="frame" x="0.0" y="0.0" width="240" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="c5s-A0-w1P">
-                                                    <rect key="frame" x="15" y="0.0" width="210" height="43.5"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
-                                    </tableViewCell>
-                                </prototypes>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" red="0.098039215686274508" green="0.098039215686274508" blue="0.10196078431372549" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="Wbl-Fj-pdI" secondAttribute="trailing" id="VdF-GR-a0I"/>
-                            <constraint firstItem="Wbl-Fj-pdI" firstAttribute="leading" secondItem="onh-2G-bZZ" secondAttribute="leading" id="Yfy-z9-6rQ"/>
-                            <constraint firstItem="Wbl-Fj-pdI" firstAttribute="top" secondItem="XOH-72-cO7" secondAttribute="bottom" id="dgF-Xb-7Oa"/>
-                            <constraint firstItem="Wbl-Fj-pdI" firstAttribute="leading" secondItem="onh-2G-bZZ" secondAttribute="leadingMargin" constant="4" id="hkn-T3-3e5"/>
-                            <constraint firstItem="WX7-bC-5lF" firstAttribute="top" secondItem="Wbl-Fj-pdI" secondAttribute="bottom" id="sK5-ME-zM3"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Wbl-Fj-pdI" secondAttribute="trailing" constant="4" id="xpG-0L-U5u"/>
-                        </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="hkn-T3-3e5"/>
-                                <exclude reference="xpG-0L-U5u"/>
-                            </mask>
-                        </variation>
-                    </view>
-                    <tabBarItem key="tabBarItem" systemItem="mostViewed" id="7eA-gR-hHx"/>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="gQr-mi-Tb1" id="wXF-D9-nV7"/>
+                            <outlet property="delegate" destination="gQr-mi-Tb1" id="rsp-JL-jAB"/>
+                        </connections>
+                    </tableView>
+                    <tabBarItem key="tabBarItem" systemItem="featured" id="mnG-nR-rJp"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="240" height="240"/>
-                    <connections>
-                        <outlet property="tableView" destination="Wbl-Fj-pdI" id="jxi-eA-lHC"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="0vj-ZF-5EH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T00-nW-do6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1255" y="63"/>
         </scene>

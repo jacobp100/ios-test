@@ -21,9 +21,9 @@ class PlaySlider: UIControl {
     @IBInspectable
     var lineWidth: CGFloat = 1.0
     @IBInspectable
-    var currentTime: Double = 0 { didSet { setNeedsLayout() } }
+    var time: Double = 0 { didSet { setNeedsLayout() } }
     @IBInspectable
-    var totalDuration: Double = 100 { didSet { setNeedsLayout() }  }
+    var duration: Double? = nil { didSet { setNeedsLayout() }  }
     @IBInspectable
     var font: UIFont = UIFont.monospacedDigitSystemFontOfSize(
         UIFont.smallSystemFontSize(),
@@ -61,8 +61,11 @@ class PlaySlider: UIControl {
         get {
             let sliderValue = isDragging && dragPosition >= 0
                 ? dragPosition
-                : currentTime
-            return (frame.size.width - 3 * sliderSize) * CGFloat(sliderValue / totalDuration)
+                : time
+            if let currentDuration = duration where currentDuration >= 0 { // FIXME
+                return (frame.size.width - 3 * sliderSize) * CGFloat(sliderValue / currentDuration)
+            }
+            return 0
         }
     }
 
@@ -117,7 +120,9 @@ class PlaySlider: UIControl {
         case .Changed:
             var t = (recognizer.locationInView(self).x - sliderSize * 1.5) / (sliderWidth - sliderSize)
             t = min(max(t, 0), 1)
-            dragPosition = Double(t) * totalDuration
+            if let duration = duration {
+                dragPosition = Double(t) * duration
+            }
         default:
             break
         }
@@ -127,8 +132,8 @@ class PlaySlider: UIControl {
         let width = frame.size.width
         let height = frame.size.height
 
-        layoutLabel(currentTimeLabel, value: isDragging ? dragPosition : currentTime)
-        layoutLabel(totalDurationLabel, value: totalDuration)
+        layoutLabel(currentTimeLabel, value: isDragging ? dragPosition : time)
+        layoutLabel(totalDurationLabel, value: duration)
 
         currentTimeLabel.frame = CGRect(
             x: 0,
@@ -174,11 +179,15 @@ class PlaySlider: UIControl {
         nextButton.path = nextPath.CGPath
     }
 
-    func layoutLabel(label: UILabel, value: Double) {
-        let formatter = NSDateComponentsFormatter()
-        formatter.zeroFormattingBehavior = .Pad
-        formatter.allowedUnits = [.Minute, .Second]
-        label.text = formatter.stringFromTimeInterval(value)
+    func layoutLabel(label: UILabel, value: Double?) {
+        if let currentValue = value where currentValue >= 0 { // FIXME
+            let formatter = NSDateComponentsFormatter()
+            formatter.zeroFormattingBehavior = .Pad
+            formatter.allowedUnits = [.Minute, .Second]
+            label.text = formatter.stringFromTimeInterval(currentValue)
+        } else {
+            label.text = "-"
+        }
         label.sizeToFit()
     }
 

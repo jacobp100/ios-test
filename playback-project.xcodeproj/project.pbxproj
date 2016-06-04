@@ -22,7 +22,8 @@
 		163376F01D021B4F00D56CB7 /* imperial-march.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 163376EE1D021B4F00D56CB7 /* imperial-march.mp3 */; };
 		163376F11D021B4F00D56CB7 /* may-the-force-be-with-you.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 163376EF1D021B4F00D56CB7 /* may-the-force-be-with-you.mp3 */; };
 		164CC2431CECD6D70045FD77 /* PlaySlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164CC2421CECD6D70045FD77 /* PlaySlider.swift */; };
-		166FD58E1CFE1F8800632C1F /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */; };
+		16628DF61D0303DA00E11FF9 /* MusicPlayerAudioFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16628DF51D0303DA00E11FF9 /* MusicPlayerAudioFile.swift */; };
+		166FD58E1CFE1F8800632C1F /* PlaylistTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166FD58D1CFE1F8800632C1F /* PlaylistTableViewController.swift */; };
 		16C36FFE1CFF7691000D6DD3 /* DarkTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */; };
 		16E65E671CF632F4002849BD /* ShapeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E65E661CF632F4002849BD /* ShapeButton.swift */; };
 		16E997B31CFCD4EA00C6CC12 /* PitchTempoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */; };
@@ -67,7 +68,8 @@
 		163376EE1D021B4F00D56CB7 /* imperial-march.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "imperial-march.mp3"; sourceTree = "<group>"; };
 		163376EF1D021B4F00D56CB7 /* may-the-force-be-with-you.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "may-the-force-be-with-you.mp3"; sourceTree = "<group>"; };
 		164CC2421CECD6D70045FD77 /* PlaySlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaySlider.swift; sourceTree = "<group>"; };
-		166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
+		16628DF51D0303DA00E11FF9 /* MusicPlayerAudioFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicPlayerAudioFile.swift; sourceTree = "<group>"; };
+		166FD58D1CFE1F8800632C1F /* PlaylistTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTableViewController.swift; sourceTree = "<group>"; };
 		16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DarkTabBarController.swift; sourceTree = "<group>"; };
 		16E65E661CF632F4002849BD /* ShapeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShapeButton.swift; sourceTree = "<group>"; };
 		16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PitchTempoViewController.swift; sourceTree = "<group>"; };
@@ -136,7 +138,7 @@
 				162FF25E1CE75B9D00939860 /* AppDelegate.swift */,
 				162FF2601CE75B9D00939860 /* ViewController.swift */,
 				162FF2621CE75B9D00939860 /* Main.storyboard */,
-				166FD58D1CFE1F8800632C1F /* PlaylistViewController.swift */,
+				166FD58D1CFE1F8800632C1F /* PlaylistTableViewController.swift */,
 				16E997B21CFCD4EA00C6CC12 /* PitchTempoViewController.swift */,
 				163376EA1D01F7CD00D56CB7 /* JumpListTableViewController.swift */,
 				163376EC1D0205EC00D56CB7 /* PickTimeViewController.swift */,
@@ -145,6 +147,7 @@
 				16E65E661CF632F4002849BD /* ShapeButton.swift */,
 				16C36FFD1CFF7691000D6DD3 /* DarkTabBarController.swift */,
 				1621BCC21D009E23005D0427 /* MusicPlayer.swift */,
+				16628DF51D0303DA00E11FF9 /* MusicPlayerAudioFile.swift */,
 				162FF2651CE75B9D00939860 /* Assets.xcassets */,
 				162FF2671CE75B9D00939860 /* LaunchScreen.storyboard */,
 				162FF26A1CE75B9D00939860 /* Info.plist */,
@@ -304,11 +307,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				164CC2431CECD6D70045FD77 /* PlaySlider.swift in Sources */,
+				16628DF61D0303DA00E11FF9 /* MusicPlayerAudioFile.swift in Sources */,
 				163376EB1D01F7CD00D56CB7 /* JumpListTableViewController.swift in Sources */,
 				16E65E671CF632F4002849BD /* ShapeButton.swift in Sources */,
 				163376ED1D0205EC00D56CB7 /* PickTimeViewController.swift in Sources */,
 				1621BCC31D009E23005D0427 /* MusicPlayer.swift in Sources */,
-				166FD58E1CFE1F8800632C1F /* PlaylistViewController.swift in Sources */,
+				166FD58E1CFE1F8800632C1F /* PlaylistTableViewController.swift in Sources */,
 				161B26A71CE8BF9500EAD5FC /* SliderView.swift in Sources */,
 				16E997B31CFCD4EA00C6CC12 /* PitchTempoViewController.swift in Sources */,
 				162FF2611CE75B9D00939860 /* ViewController.swift in Sources */,

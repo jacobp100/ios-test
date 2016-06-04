@@ -26,33 +26,21 @@ class StaticAction {
     }
 }
 
-class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate, UITableViewDelegate, UITableViewDataSource {
-
-    @IBOutlet weak var tableView: UITableView?
-
-    private var kvoContext: UInt8 = 1
+class PlaylistTableViewController: UITableViewController, MPMediaPickerControllerDelegate {
 
     var musicPlayer: MusicPlayer? {
         didSet {
-            tableView?.reloadData()
+            reload()
 
-            if let previousMusicPlayer = oldValue {
-                previousMusicPlayer.removeObserver(self, forKeyPath: "currentIndex")
-                previousMusicPlayer.removeObserver(self, forKeyPath: "playlist")
+            if oldValue != nil {
+                removeEvents()
             }
 
             if let currentMusicPlayer = musicPlayer {
-                currentMusicPlayer.addObserver(
-                    self,
-                    forKeyPath: "currentIndex",
-                    options: .New,
-                    context: &kvoContext
-                )
-                currentMusicPlayer.addObserver(
-                    self,
-                    forKeyPath: "playlist",
-                    options: .New,
-                    context: &kvoContext
+                addEventListeners(
+                    selector: #selector(PlaylistTableViewController.reload),
+                    events: [MusicPlayer.ITEM_DID_CHANGE, MusicPlayer.PLAYLIST_DID_CHANGE],
+                    object: currentMusicPlayer
                 )
             }
         }
@@ -68,8 +56,6 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        tableView?.delegate = self
-        tableView?.dataSource = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -77,27 +63,18 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
         // Dispose of any resources that can be recreated.
     }
 
-    override func observeValueForKeyPath(
-        keyPath: String?,
-        ofObject object: AnyObject?,
-        change: [String : AnyObject]?,
-        context: UnsafeMutablePointer<Void>
-    ) {
-        tableView?.reloadData()
-    }
-
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0
             ? actions.count
             : musicPlayer?.playlist.count ?? 0
     }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("PlaylistCell", forIndexPath: indexPath)
 
         cell.imageView?.bounds = CGRect(x: 0, y: 0, width: 16, height: 16)
 
@@ -127,7 +104,7 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
         return cell
     }
 
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if indexPath.section == 0 {
             switch actions[indexPath.row].action {
             case .AddMediaItems:
@@ -144,6 +121,12 @@ class PlaylistViewController: UIViewController, MPMediaPickerControllerDelegate,
     func deselect() {
         if let selectedPath = tableView?.indexPathForSelectedRow {
             tableView?.deselectRowAtIndexPath(selectedPath, animated: false)
+        }
+    }
+
+    func reload() {
+        dispatch_async(dispatch_get_main_queue()) {
+            self.tableView?.reloadData()
         }
     }
 
