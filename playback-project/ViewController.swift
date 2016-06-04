@@ -41,6 +41,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     private var demoJumplistItemsForSong: [Double] = [
         30,
         45,
+        80,
     ]
 
     override func viewDidLoad() {

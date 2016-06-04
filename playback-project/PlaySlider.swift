@@ -37,6 +37,8 @@ class PlaySlider: UIControl {
     }
     @IBInspectable
     var jumplistSize: CGFloat = 5
+    @IBInspectable
+    var jumplistDragSnap: CGFloat = 5
 
     var delegate: PlaySliderDelegate?
     var jumplistItems: [Double] = []
@@ -121,10 +123,29 @@ class PlaySlider: UIControl {
             isDragging = false
             dragPosition = -1
         case .Changed:
-            var t = (recognizer.locationInView(self).x - sliderSize * 1.5) / (sliderWidth - sliderSize)
+            var x = (recognizer.locationInView(self).x - sliderSize * 1.5)
+
+            func distanceToX(value: Double) -> CGFloat {
+                if let valueX = getSliderPosition(value) {
+                    return abs(valueX - x)
+                }
+                return CGFloat.infinity
+            }
+
+            let tToSnap = jumplistItems
+                .filter { distanceToX($0) < jumplistDragSnap }
+                .sort { distanceToX($0) < distanceToX($1) }
+                .first
+
+            if let t = tToSnap {
+                dragPosition = t
+                return
+            }
+
+            var t = x / (sliderWidth - sliderSize)
             t = min(max(t, 0), 1)
-            if let duration = duration {
-                dragPosition = Double(t) * duration
+            if let currentDuration = duration {
+                dragPosition = Double(t) * currentDuration
             }
         default:
             break
@@ -164,50 +185,29 @@ class PlaySlider: UIControl {
 
         if let sliderPosition = getSliderPosition(sliderValue) {
             let playPauseButtonFrame = rectForButton(sliderPosition)
-            drawPauseButton(playPausePath, frame: playPauseButtonFrame)
 
-            let jumplistRects = jumplistItems.map {
-                value -> CGRect in
-                let jumplistItemPosition = getSliderPosition(value)!
-                return CGRect(
-                    x: jumplistItemPosition,
-                    y: sliderY,
-                    width: 0,
-                    height: 0
-                ).insetBy(dx: -jumplistSize / 2, dy: -jumplistSize / 2)
-            }
+            jumplistItems.forEach {
+                value in
+                let x = getSliderPosition(value)! + sliderSize / 2
+                let centrePoint = CGPoint(x: x, y: sliderY)
+                var y = sliderY
 
-            let jumplistRectsNotIntersecting = jumplistRects.filter {
-                !$0.intersects(playPauseButtonFrame)
-            }
-
-            let jumplistRectsIntersecting = jumplistRects.filter {
-                $0.intersects(playPauseButtonFrame)
-            }
-
-            let lastX = (jumplistRectsNotIntersecting + [playPauseButtonFrame]).sort {
-                $0.midX < $1.midX
-            }.reduce(CGFloat(0)) {
-                (previousRight, frame) in
-                drawCircleInRect(playPausePath, frame: frame)
-                drawHorizontalLineBetween(playPausePath, x1: previousRight, x2: frame.minX, y: sliderY)
-
-                return frame.maxX
-            }
-            drawHorizontalLineBetween(playPausePath, x1: lastX, x2: sliderWidth, y: sliderY)
-
-            if isDragging {
-                jumplistRectsIntersecting.forEach {
-                    frame in
-                    let r = sliderSize / 2 + jumplistSize
-                    let x = frame.midX - playPauseButtonFrame.midX
-                    let y = abs(x) < r
+                if playPauseButtonFrame.contains(centrePoint) {
+                    let r = sliderSize / 2 - lineWidth / 2
+                    let x = x - playPauseButtonFrame.midX
+                    let dy = abs(x) < r
                         ? sqrt(pow(r, 2) - pow(x, 2))
                         : 0
-                    let adjustedFrame = frame.offsetBy(dx: 0, dy: -max(y, jumplistSize))
-                    drawCircleInRect(playPausePath, frame: adjustedFrame)
+                    y -= dy
                 }
+
+                drawLineBetween(playPausePath, x: x, y1: y, y2: y - jumplistSize)
             }
+
+            drawPauseButton(playPausePath, frame: playPauseButtonFrame)
+            drawCircleInRect(playPausePath, frame: playPauseButtonFrame)
+            drawLineBetween(playPausePath, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
+            drawLineBetween(playPausePath, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
         }
 
         playPauseButton.path = playPausePath.CGPath
@@ -264,9 +264,17 @@ class PlaySlider: UIControl {
         ctx.appendPath(UIBezierPath(ovalInRect: frame.insetBy(dx: dx, dy: dx)))
     }
 
-    func drawHorizontalLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y: CGFloat) {
-        ctx.moveToPoint(CGPoint(x: x1, y: y))
-        ctx.addLineToPoint(CGPoint(x: x2, y: y))
+    func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
+        ctx.moveToPoint(CGPoint(x: x1, y: y1))
+        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+    }
+
+    func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y: CGFloat) {
+        drawLineBetween(ctx, x1: x1, x2: x2, y1: y, y2: y)
+    }
+
+    func drawLineBetween(ctx: UIBezierPath, x: CGFloat, y1: CGFloat, y2: CGFloat) {
+        drawLineBetween(ctx, x1: x, x2: x, y1: y1, y2: y2)
     }
 
     func getDrawButtonBounds(frame: CGRect) -> (x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {

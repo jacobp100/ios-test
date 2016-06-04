@@ -462,7 +462,7 @@
                             <outlet property="delegate" destination="gQr-mi-Tb1" id="rsp-JL-jAB"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" systemItem="featured" id="mnG-nR-rJp"/>
+                    <tabBarItem key="tabBarItem" systemItem="recents" id="mnG-nR-rJp"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="240" height="240"/>
                 </tableViewController>
