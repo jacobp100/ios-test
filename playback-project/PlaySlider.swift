@@ -39,6 +39,8 @@ class PlaySlider: UIControl {
     var jumplistSize: CGFloat = 5
     @IBInspectable
     var jumplistDragSnap: CGFloat = 5
+    @IBInspectable
+    var jumplistTapSnap: CGFloat = 10
 
     var delegate: PlaySliderDelegate?
     var jumplistItems: [Double] = []
@@ -49,6 +51,7 @@ class PlaySlider: UIControl {
     private var currentTimeLabel = UILabel()
     private var totalDurationLabel = UILabel()
     private var panGestureRecognizer: UIPanGestureRecognizer!
+    private var tapGestureRecognizer: UITapGestureRecognizer!
     private var isDragging = false
     private var dragPosition: Double = -1 { didSet { setNeedsLayout() } }
     private var padding: CGFloat = 8
@@ -79,9 +82,16 @@ class PlaySlider: UIControl {
 
         panGestureRecognizer = UIPanGestureRecognizer(
             target: self,
-            action: #selector(SliderView.handlePan(_:))
+            action: #selector(handlePan(_:))
         )
         addGestureRecognizer(panGestureRecognizer)
+
+        tapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTap(_:))
+        )
+        tapGestureRecognizer.numberOfTapsRequired = 2
+        addGestureRecognizer(tapGestureRecognizer)
 
         playPauseButton.addTarget(
             self,
@@ -123,32 +133,17 @@ class PlaySlider: UIControl {
             isDragging = false
             dragPosition = -1
         case .Changed:
-            var x = (recognizer.locationInView(self).x - sliderSize * 1.5)
-
-            func distanceToX(value: Double) -> CGFloat {
-                if let valueX = getSliderPosition(value) {
-                    return abs(valueX - x)
-                }
-                return CGFloat.infinity
-            }
-
-            let tToSnap = jumplistItems
-                .filter { distanceToX($0) < jumplistDragSnap }
-                .sort { distanceToX($0) < distanceToX($1) }
-                .first
-
-            if let t = tToSnap {
+            if let t = tForGestureWithJumplistSnap(recognizer, snap: jumplistDragSnap) {
                 dragPosition = t
-                return
-            }
-
-            var t = x / (sliderWidth - sliderSize)
-            t = min(max(t, 0), 1)
-            if let currentDuration = duration {
-                dragPosition = Double(t) * currentDuration
             }
         default:
             break
+        }
+    }
+
+    func handleTap(recognizer: UITapGestureRecognizer) {
+        if let t = tForGestureWithJumplistSnap(recognizer, snap: jumplistTapSnap) {
+            delegate?.playSliderValueDidChange(self, value: t)
         }
     }
 
@@ -316,6 +311,33 @@ class PlaySlider: UIControl {
     private func getSliderPosition(value: Double) -> CGFloat? {
         if let currentDuration = duration {
             return (frame.size.width - 3 * sliderSize) * CGFloat(value / currentDuration)
+        }
+        return nil
+    }
+
+    private func tForGestureWithJumplistSnap(recognizer: UIGestureRecognizer, snap: CGFloat) -> Double? {
+        let x = recognizer.locationInView(self).x - sliderSize * 1.5
+
+        func distanceToX(value: Double) -> CGFloat {
+            if let valueX = getSliderPosition(value) {
+                return abs(valueX - x)
+            }
+            return CGFloat.infinity
+        }
+
+        let tToSnap = jumplistItems
+            .filter { distanceToX($0) < snap }
+            .sort { distanceToX($0) < distanceToX($1) }
+            .first
+
+        if let t = tToSnap {
+            return t
+        }
+
+        var t = x / (sliderWidth - sliderSize)
+        t = min(max(t, 0), 1)
+        if let currentDuration = duration {
+            return Double(t) * currentDuration
         }
         return nil
     }
