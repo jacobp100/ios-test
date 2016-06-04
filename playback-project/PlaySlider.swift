@@ -13,6 +13,12 @@ protocol PlaySliderDelegate {
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double)
 }
 
+extension CGRect {
+    func moveTo(x x: CGFloat, y: CGFloat) -> CGRect {
+        return self.offsetBy(dx: x - self.minX, dy: y - self.minY)
+    }
+}
+
 @IBDesignable
 class PlaySlider: UIControl {
 
@@ -133,7 +139,7 @@ class PlaySlider: UIControl {
             isDragging = false
             dragPosition = -1
         case .Changed:
-            if let t = tForGestureWithJumplistSnap(recognizer, snap: jumplistDragSnap) {
+            if let t = tForGesture(recognizer, snap: jumplistDragSnap) {
                 dragPosition = t
             }
         default:
@@ -142,7 +148,7 @@ class PlaySlider: UIControl {
     }
 
     func handleTap(recognizer: UITapGestureRecognizer) {
-        if let t = tForGestureWithJumplistSnap(recognizer, snap: jumplistTapSnap) {
+        if let t = tForGesture(recognizer, snap: jumplistTapSnap) {
             delegate?.playSliderValueDidChange(self, value: t)
         }
     }
@@ -154,17 +160,13 @@ class PlaySlider: UIControl {
         layoutLabel(currentTimeLabel, value: isDragging ? dragPosition : time)
         layoutLabel(totalDurationLabel, value: duration)
 
-        currentTimeLabel.frame = CGRect(
+        currentTimeLabel.frame = currentTimeLabel.frame.moveTo(
             x: 0,
-            y: height - currentTimeLabel.frame.height,
-            width: currentTimeLabel.frame.width,
-            height: currentTimeLabel.frame.height
+            y: height - currentTimeLabel.frame.height
         )
-        totalDurationLabel.frame = CGRect(
+        totalDurationLabel.frame = totalDurationLabel.frame.moveTo(
             x: width - totalDurationLabel.frame.width,
-            y: height - totalDurationLabel.frame.height,
-            width: totalDurationLabel.frame.width,
-            height: totalDurationLabel.frame.height
+            y: height - totalDurationLabel.frame.height
         )
 
         previousButton.frame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
@@ -175,36 +177,10 @@ class PlaySlider: UIControl {
             ? dragPosition
             : time
 
-        let sliderY = playPauseButton.frame.midY - jumplistSize
         let playPausePath = UIBezierPath()
-
         if let sliderPosition = getSliderPosition(sliderValue) {
-            let playPauseButtonFrame = rectForButton(sliderPosition)
-
-            jumplistItems.forEach {
-                value in
-                let x = getSliderPosition(value)! + sliderSize / 2
-                let centrePoint = CGPoint(x: x, y: sliderY)
-                var y = sliderY
-
-                if playPauseButtonFrame.contains(centrePoint) {
-                    let r = sliderSize / 2 - lineWidth / 2
-                    let x = x - playPauseButtonFrame.midX
-                    let dy = abs(x) < r
-                        ? sqrt(pow(r, 2) - pow(x, 2))
-                        : 0
-                    y -= dy
-                }
-
-                drawLineBetween(playPausePath, x: x, y1: y, y2: y - jumplistSize)
-            }
-
-            drawPauseButton(playPausePath, frame: playPauseButtonFrame)
-            drawCircleInRect(playPausePath, frame: playPauseButtonFrame)
-            drawLineBetween(playPausePath, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
-            drawLineBetween(playPausePath, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
+            drawSlider(playPausePath, sliderPosition: sliderPosition)
         }
-
         playPauseButton.path = playPausePath.CGPath
 
         let buttonRect = rectForButton()
@@ -241,11 +217,11 @@ class PlaySlider: UIControl {
         totalDurationLabel.textColor = color
     }
 
-    func rectForButton() -> CGRect {
+    private func rectForButton() -> CGRect {
         return rectForButton(0)
     }
 
-    func rectForButton(position: CGFloat) -> CGRect {
+    private func rectForButton(position: CGFloat) -> CGRect {
         return CGRect(
             x: position,
             y: 0,
@@ -254,25 +230,54 @@ class PlaySlider: UIControl {
         )
     }
 
-    func drawCircleInRect(ctx: UIBezierPath, frame: CGRect) {
+    private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat) {
+        let sliderY = playPauseButton.frame.midY - jumplistSize
+
+        let playPauseButtonFrame = rectForButton(sliderPosition)
+
+        jumplistItems.forEach {
+            value in
+            let x = getSliderPosition(value)! + sliderSize / 2
+            let centrePoint = CGPoint(x: x, y: sliderY)
+            var y = sliderY
+
+            if playPauseButtonFrame.contains(centrePoint) {
+                let r = sliderSize / 2 - lineWidth / 2
+                let x = x - playPauseButtonFrame.midX
+                let dy = abs(x) < r
+                    ? sqrt(pow(r, 2) - pow(x, 2))
+                    : 0
+                y -= dy
+            }
+
+            drawLineBetween(ctx, x: x, y1: y, y2: y - jumplistSize)
+        }
+
+        drawPauseButton(ctx, frame: playPauseButtonFrame)
+        drawCircleInRect(ctx, frame: playPauseButtonFrame)
+        drawLineBetween(ctx, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
+        drawLineBetween(ctx, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
+    }
+
+    private func drawCircleInRect(ctx: UIBezierPath, frame: CGRect) {
         let dx = lineWidth / 2
         ctx.appendPath(UIBezierPath(ovalInRect: frame.insetBy(dx: dx, dy: dx)))
     }
 
-    func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
+    private func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
         ctx.moveToPoint(CGPoint(x: x1, y: y1))
         ctx.addLineToPoint(CGPoint(x: x2, y: y2))
     }
 
-    func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y: CGFloat) {
+    private func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y: CGFloat) {
         drawLineBetween(ctx, x1: x1, x2: x2, y1: y, y2: y)
     }
 
-    func drawLineBetween(ctx: UIBezierPath, x: CGFloat, y1: CGFloat, y2: CGFloat) {
+    private func drawLineBetween(ctx: UIBezierPath, x: CGFloat, y1: CGFloat, y2: CGFloat) {
         drawLineBetween(ctx, x1: x, x2: x, y1: y1, y2: y2)
     }
 
-    func getDrawButtonBounds(frame: CGRect) -> (x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
+    private func getDrawButtonBounds(frame: CGRect) -> (x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
         let x1 = frame.minX + frame.width * 5 / 13
         let x2 = frame.minX + frame.width * 8 / 13
         let y1 = frame.minY + frame.height * 1 / 3
@@ -280,28 +285,24 @@ class PlaySlider: UIControl {
         return (x1, x2, y1, y2)
     }
 
-    func drawPauseButton(ctx: UIBezierPath, frame: CGRect) {
+    private func drawPauseButton(ctx: UIBezierPath, frame: CGRect) {
         let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
-        ctx.moveToPoint(CGPoint(x: x1, y: y1))
-        ctx.addLineToPoint(CGPoint(x: x1, y: y2))
-        ctx.moveToPoint(CGPoint(x: x2, y: y1))
-        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+        drawLineBetween(ctx, x: x1, y1: y1, y2: y2)
+        drawLineBetween(ctx, x: x2, y1: y1, y2: y2)
     }
 
-    func drawPreviousButton(ctx: UIBezierPath, frame: CGRect) {
+    private func drawPreviousButton(ctx: UIBezierPath, frame: CGRect) {
         let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
-        ctx.moveToPoint(CGPoint(x: x1, y: y1))
-        ctx.addLineToPoint(CGPoint(x: x1, y: y2))
+        drawLineBetween(ctx, x: x1, y1: y1, y2: y2)
         ctx.moveToPoint(CGPoint(x: x2, y: y1))
         ctx.addLineToPoint(CGPoint(x: x2, y: y2))
         ctx.addLineToPoint(CGPoint(x: x1 + lineWidth, y: (y2 - y1) / 2 + y1))
         ctx.closePath()
     }
 
-    func drawNextButton(ctx: UIBezierPath, frame: CGRect) {
+    private func drawNextButton(ctx: UIBezierPath, frame: CGRect) {
         let (x1, x2, y1, y2) = getDrawButtonBounds(frame)
-        ctx.moveToPoint(CGPoint(x: x2, y: y1))
-        ctx.addLineToPoint(CGPoint(x: x2, y: y2))
+        drawLineBetween(ctx, x: x2, y1: y1, y2: y2)
         ctx.moveToPoint(CGPoint(x: x1, y: y1))
         ctx.addLineToPoint(CGPoint(x: x1, y: y2))
         ctx.addLineToPoint(CGPoint(x: x2 - lineWidth, y: (y2 - y1) / 2 + y1))
@@ -315,7 +316,7 @@ class PlaySlider: UIControl {
         return nil
     }
 
-    private func tForGestureWithJumplistSnap(recognizer: UIGestureRecognizer, snap: CGFloat) -> Double? {
+    private func tForGesture(recognizer: UIGestureRecognizer, snap: CGFloat) -> Double? {
         let x = recognizer.locationInView(self).x - sliderSize * 1.5
 
         func distanceToX(value: Double) -> CGFloat {
