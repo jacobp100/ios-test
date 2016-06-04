@@ -9,17 +9,18 @@
 import UIKit
 import MediaPlayer
 
-enum StaticActionHandler {
+
+enum PlaylistActionHandler {
     case AddMediaItems
     case ClearPlaylist
 }
 
-class StaticAction {
+class PlaylistAction {
     var title: String!
     var image: String!
-    var action: StaticActionHandler
+    var action: PlaylistActionHandler
 
-    init(title: String, image: String, action: StaticActionHandler) {
+    init(title: String, image: String, action: PlaylistActionHandler) {
         self.title = title
         self.image = image
         self.action = action
@@ -47,9 +48,9 @@ class PlaylistTableViewController: UITableViewController, MPMediaPickerControlle
     }
 
     private var mediaPicker: MPMediaPickerController?
-    private let actions: [StaticAction] = [
-        StaticAction(title: "Add from Library", image: "tableview-add", action: .AddMediaItems),
-        StaticAction(title: "Clear Playlist", image: "tableview-clear", action: .ClearPlaylist),
+    private let actions: [PlaylistAction] = [
+        PlaylistAction(title: "Add from Library", image: "tableview-add", action: .AddMediaItems),
+        PlaylistAction(title: "Clear Playlist", image: "tableview-clear", action: .ClearPlaylist),
     ]
 
     override func viewDidLoad() {

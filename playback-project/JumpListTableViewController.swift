@@ -25,8 +25,6 @@ class JumpListAction {
 
 class JumpListTableViewController: UITableViewController, PickTimeDelegate {
 
-    private var kvoContext: UInt8 = 1
-
     var musicPlayer: MusicPlayer? {
         didSet {
             reload()

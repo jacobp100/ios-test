@@ -37,7 +37,11 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
     private var musicPlayer = MusicPlayer()
     private var displayLink: CADisplayLink?
-    private var kvoContext: UInt8 = 1
+
+    private var demoJumplistItemsForSong: [Double] = [
+        30,
+        45,
+    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +57,8 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         displayLink!.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
 
         separatorConstraint.constant = 1 / UIScreen.mainScreen().scale
-        playbackSlider?.delegate = self
+        playbackSlider.delegate = self
+        playbackSlider.jumplistItems = demoJumplistItemsForSong
 
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
 

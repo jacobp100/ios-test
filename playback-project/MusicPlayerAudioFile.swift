@@ -24,7 +24,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
     var title: String
     var delegate: MusicPlayerFileDelegate?
     var loaded: Bool { get { return audioFile != nil } }
-    var duration: Double { get { return audioFile?.duration ?? -1 } }
+    var duration: Double? { get { return audioFile?.duration } }
     var time: Double {
         get {
             var time = seekingTimeOffset ?? 0
@@ -39,7 +39,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
         }
     }
     var pitch: Float = 0 { didSet { timePitchNode.pitch = pitch } }
-    var tempo: Float = 100 { didSet { timePitchNode.rate = tempo } }
+    var tempo: Float = 1 { didSet { timePitchNode.rate = tempo } }
 
     private var audioFile: AVAudioFile?
     private var audioPlayerPlayingSegmentIndex: Int = 0

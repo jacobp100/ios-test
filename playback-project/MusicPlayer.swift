@@ -19,7 +19,7 @@ protocol MusicPlayerFileDelegate {
 protocol MusicPlayerFile: class {
     var delegate: MusicPlayerFileDelegate? { get set }
     var title: String { get }
-    var duration: Double { get }
+    var duration: Double? { get }
     var time: Double { get }
     var loaded: Bool { get }
     var pitch: Float { get set }

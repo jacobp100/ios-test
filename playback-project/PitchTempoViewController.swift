@@ -13,8 +13,6 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
     @IBOutlet weak var pitchSlider: SliderView?
     @IBOutlet weak var tempoSlider: SliderView?
 
-    private var kvoContext: UInt8 = 1
-
     var musicPlayer: MusicPlayer? {
         didSet {
             setProperties()

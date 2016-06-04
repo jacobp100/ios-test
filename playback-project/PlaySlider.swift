@@ -35,8 +35,11 @@ class PlaySlider: UIControl {
             setNeedsLayout()
         }
     }
+    @IBInspectable
+    var jumplistSize: CGFloat = 5
 
     var delegate: PlaySliderDelegate?
+    var jumplistItems: [Double] = []
 
     private var playPauseButton = ShapeButton()
     private var previousButton = ShapeButton()
@@ -49,7 +52,7 @@ class PlaySlider: UIControl {
     private var padding: CGFloat = 8
     private var sliderSize: CGFloat {
         get {
-            return frame.size.height - currentTimeLabel.frame.height - padding
+            return frame.size.height - currentTimeLabel.frame.height - padding - jumplistSize
         }
     }
     private var sliderWidth: CGFloat {
@@ -62,7 +65,7 @@ class PlaySlider: UIControl {
             let sliderValue = isDragging && dragPosition >= 0
                 ? dragPosition
                 : time
-            if let currentDuration = duration where currentDuration >= 0 { // FIXME
+            if let currentDuration = duration {
                 return (frame.size.width - 3 * sliderSize) * CGFloat(sliderValue / currentDuration)
             }
             return 0
@@ -148,31 +151,75 @@ class PlaySlider: UIControl {
             height: totalDurationLabel.frame.height
         )
 
-        previousButton.frame = CGRect(x: 0, y: 0, width: sliderSize, height: sliderSize)
-        playPauseButton.frame = CGRect(x: sliderSize, y: 0, width: sliderWidth, height: sliderSize)
-        nextButton.frame = CGRect(x: width - sliderSize, y: 0, width: sliderSize, height: sliderSize)
+        previousButton.frame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
+        playPauseButton.frame = CGRect(x: sliderSize, y: jumplistSize, width: sliderWidth, height: sliderSize)
+        nextButton.frame = CGRect(x: width - sliderSize, y: jumplistSize, width: sliderSize, height: sliderSize)
 
-        let playPauseButtonRect = rectForButton(sliderPosition)
+        let sliderValue = isDragging && dragPosition >= 0
+            ? dragPosition
+            : time
 
-        let sliderY = playPauseButton.frame.midY
+        let sliderY = playPauseButton.frame.midY - jumplistSize
         let playPausePath = UIBezierPath()
-        drawButtonOutline(playPausePath, frame: playPauseButtonRect)
-        drawPauseButton(playPausePath, frame: playPauseButtonRect)
-        playPausePath.moveToPoint(CGPoint(x: 0, y: sliderY))
-        playPausePath.addLineToPoint(CGPoint(x: sliderPosition, y: sliderY))
-        playPausePath.moveToPoint(CGPoint(x: sliderPosition + sliderSize, y: sliderY))
-        playPausePath.addLineToPoint(CGPoint(x: sliderWidth, y: sliderY))
+
+        if let sliderPosition = getSliderPosition(sliderValue) {
+            let playPauseButtonFrame = rectForButton(sliderPosition)
+            drawPauseButton(playPausePath, frame: playPauseButtonFrame)
+
+            let jumplistRects = jumplistItems.map {
+                value -> CGRect in
+                let jumplistItemPosition = getSliderPosition(value)!
+                return CGRect(
+                    x: jumplistItemPosition,
+                    y: sliderY,
+                    width: 0,
+                    height: 0
+                ).insetBy(dx: -jumplistSize / 2, dy: -jumplistSize / 2)
+            }
+
+            let jumplistRectsNotIntersecting = jumplistRects.filter {
+                !$0.intersects(playPauseButtonFrame)
+            }
+
+            let jumplistRectsIntersecting = jumplistRects.filter {
+                $0.intersects(playPauseButtonFrame)
+            }
+
+            let lastX = (jumplistRectsNotIntersecting + [playPauseButtonFrame]).sort {
+                $0.midX < $1.midX
+            }.reduce(CGFloat(0)) {
+                (previousRight, frame) in
+                drawCircleInRect(playPausePath, frame: frame)
+                drawHorizontalLineBetween(playPausePath, x1: previousRight, x2: frame.minX, y: sliderY)
+
+                return frame.maxX
+            }
+            drawHorizontalLineBetween(playPausePath, x1: lastX, x2: sliderWidth, y: sliderY)
+
+            if isDragging {
+                jumplistRectsIntersecting.forEach {
+                    frame in
+                    let r = sliderSize / 2 + jumplistSize
+                    let x = frame.midX - playPauseButtonFrame.midX
+                    let y = abs(x) < r
+                        ? sqrt(pow(r, 2) - pow(x, 2))
+                        : 0
+                    let adjustedFrame = frame.offsetBy(dx: 0, dy: -max(y, jumplistSize))
+                    drawCircleInRect(playPausePath, frame: adjustedFrame)
+                }
+            }
+        }
 
         playPauseButton.path = playPausePath.CGPath
 
         let buttonRect = rectForButton()
 
         let previousPath = UIBezierPath()
-        drawButtonOutline(previousPath, frame: buttonRect)
+        drawCircleInRect(previousPath, frame: buttonRect)
         drawPreviousButton(previousPath, frame: buttonRect)
 
         let nextPath = UIBezierPath()
-        drawButtonOutline(nextPath, frame: buttonRect)
+        drawCircleInRect(nextPath, frame: buttonRect)
         drawNextButton(nextPath, frame: buttonRect)
 
         previousButton.path = previousPath.CGPath
@@ -212,9 +259,14 @@ class PlaySlider: UIControl {
         )
     }
 
-    func drawButtonOutline(ctx: UIBezierPath, frame: CGRect) {
+    func drawCircleInRect(ctx: UIBezierPath, frame: CGRect) {
         let dx = lineWidth / 2
         ctx.appendPath(UIBezierPath(ovalInRect: frame.insetBy(dx: dx, dy: dx)))
+    }
+
+    func drawHorizontalLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y: CGFloat) {
+        ctx.moveToPoint(CGPoint(x: x1, y: y))
+        ctx.addLineToPoint(CGPoint(x: x2, y: y))
     }
 
     func getDrawButtonBounds(frame: CGRect) -> (x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
@@ -251,6 +303,13 @@ class PlaySlider: UIControl {
         ctx.addLineToPoint(CGPoint(x: x1, y: y2))
         ctx.addLineToPoint(CGPoint(x: x2 - lineWidth, y: (y2 - y1) / 2 + y1))
         ctx.closePath()
+    }
+
+    private func getSliderPosition(value: Double) -> CGFloat? {
+        if let currentDuration = duration {
+            return (frame.size.width - 3 * sliderSize) * CGFloat(value / currentDuration)
+        }
+        return nil
     }
 
 }
