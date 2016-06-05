@@ -49,7 +49,7 @@ class PlaySlider: UIControl {
     var jumplistTapSnap: CGFloat = 10
 
     var delegate: PlaySliderDelegate?
-    var jumplistItems: [Double] = []
+    var jumplistItems: [JumplistItem] = []
 
     private var playPauseButton = ShapeButton()
     private var previousButton = ShapeButton()
@@ -236,8 +236,12 @@ class PlaySlider: UIControl {
         let playPauseButtonFrame = rectForButton(sliderPosition)
 
         jumplistItems.forEach {
-            value in
-            let x = getSliderPosition(value)! + sliderSize / 2
+            jumplistItem in
+            guard let time = jumplistItem.time as? Double else {
+                return
+            }
+
+            let x = getSliderPosition(time)! + sliderSize / 2
             let centrePoint = CGPoint(x: x, y: sliderY)
             var y = sliderY
 
@@ -319,20 +323,20 @@ class PlaySlider: UIControl {
     private func tForGesture(recognizer: UIGestureRecognizer, snap: CGFloat) -> Double? {
         let x = recognizer.locationInView(self).x - sliderSize * 1.5
 
-        func distanceToX(value: Double) -> CGFloat {
-            if let valueX = getSliderPosition(value) {
+        func distanceToX(jumplistItem: JumplistItem) -> CGFloat {
+            if let t = jumplistItem.time as? Double, let valueX = getSliderPosition(t) {
                 return abs(valueX - x)
             }
             return CGFloat.infinity
         }
 
-        let tToSnap = jumplistItems
+        let jumplistItemToSnap = jumplistItems
             .filter { distanceToX($0) < snap }
             .sort { distanceToX($0) < distanceToX($1) }
             .first
 
-        if let t = tToSnap {
-            return t
+        if let jumplistItem = jumplistItemToSnap {
+            return jumplistItem.time as? Double
         }
 
         var t = x / (sliderWidth - sliderSize)

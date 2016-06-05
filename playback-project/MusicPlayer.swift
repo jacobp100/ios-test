@@ -9,6 +9,7 @@
 import UIKit
 import MediaPlayer
 import AVFoundation
+import CoreData
 
 protocol MusicPlayerFileDelegate {
     func musicPlayerFileDidLoad(sender: MusicPlayerFile)
@@ -17,7 +18,10 @@ protocol MusicPlayerFileDelegate {
 }
 
 protocol MusicPlayerFile: class {
+    var type: String { get }
+    var id: String { get }
     var delegate: MusicPlayerFileDelegate? { get set }
+    var model: MediaItem? { get set }
     var title: String { get }
     var duration: Double? { get }
     var time: Double { get }
@@ -31,13 +35,18 @@ protocol MusicPlayerFile: class {
 
 class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
-    static let PLAYLIST_DID_CHANGE = "PLAYLIST_DID_CHANGE"
-    static let ITEM_DID_CHANGE = "ITEM_DID_CHANGE"
-    static let ITEM_DID_LOAD = "ITEM_DID_LOAD"
-    static let PITCH_DID_CHANGE = "PITCH_DID_CHANGE"
-    static let TEMPO_DID_CHANGE = "TEMPO_DID_CHANGE"
+    static let PLAYLIST_DID_CHANGE = "MUSIC_PLAYER_PLAYLIST_DID_CHANGE"
+    static let ITEM_DID_CHANGE = "MUSIC_PLAYER_ITEM_DID_CHANGE"
+    static let ITEM_DID_LOAD = "MUSIC_PLAYER_ITEM_DID_LOAD"
+    static let PITCH_DID_CHANGE = "MUSIC_PLAYER_PITCH_DID_CHANGE"
+    static let TEMPO_DID_CHANGE = "MUSIC_PLAYER_TEMPO_DID_CHANGE"
 
-    var playlist: [MusicPlayerFile] = [] { didSet { emitEvent(MusicPlayer.PLAYLIST_DID_CHANGE) } }
+    var playlist: [MusicPlayerFile] = [] {
+        didSet {
+            emitEvent(MusicPlayer.PLAYLIST_DID_CHANGE)
+            updatePlaylist()
+        }
+    }
     var currentIndex: Int = -1 { didSet { emitEvent(MusicPlayer.ITEM_DID_CHANGE) } }
     var playing: Bool = false
     var pitch: Int = 0 {
@@ -61,6 +70,9 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
         }
     }
 
+    var managedObjectContext: NSManagedObjectContext? =
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext // FIXME
+
     private struct SeekItem {
         var item: MusicPlayerFile
         var time: Double
@@ -76,9 +88,9 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
         playlist += files
 
-        if let firstItem = playlist.first where enqueFirst {
-            firstItem.delegate = self
-            firstItem.enque()
+        if let item = playlist.first where item.delegate as? MusicPlayer !== self && enqueFirst {
+            loadItem(item)
+            item.enque()
         }
     }
 
@@ -87,9 +99,11 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     }
 
     func playAtIndex(index: Int) {
+        stop()
+
         if index < playlist.count {
             currentIndex = index
-            seek(0)
+            play()
         }
     }
 
@@ -98,6 +112,10 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     }
 
     func stop() {
+        if let item = currentItem {
+            item.stop()
+        }
+
         playing = false
     }
 
@@ -119,8 +137,16 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
         seekItem = SeekItem(item: item, time: time)
 
         if item.delegate as? MusicPlayer !== self {
-            item.delegate = self
+            loadItem(item)
             item.enque()
+        }
+    }
+
+    private func loadItem(item: MusicPlayerFile) {
+        item.delegate = self
+
+        if let context = managedObjectContext {
+            item.model = MediaItem.mediaItemForMusicPlayerFile(item, context: context)
         }
     }
 
@@ -146,6 +172,53 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
     func musicPlayerFileDidFinish(sender: MusicPlayerFile) {
         playNext()
+    }
+
+    private func updatePlaylist() {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        let mediaItemSetOptional = playlist.reduce(NSMutableOrderedSet()) {
+            (setOptional: NSMutableOrderedSet?, musicPlayerFile: MusicPlayerFile) -> NSMutableOrderedSet? in
+            if let set = setOptional, let mediaItem = MediaItem.mediaItemForMusicPlayerFile(musicPlayerFile, context: context) {
+                set.addObject(mediaItem)
+                return set
+            }
+            return nil
+        }
+
+        guard let mediaItemSet = mediaItemSetOptional else {
+            return
+        }
+
+        context.performBlock {
+            if let playlist = Playlist.playlistForName("Current Playlist", context: context) {
+                playlist.mediaItems = mediaItemSet
+            }
+
+            guard let _ = try? context.save() else {
+                print("Fuck")
+                return
+            }
+        }
+
+        printDb()
+    }
+
+    private func printDb() {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        context.performBlock {
+            if let mediaItems = try? context.executeFetchRequest(NSFetchRequest(entityName: "MediaItem")) {
+                print("Media items:", mediaItems.count)
+            }
+            if let playlists = try? context.executeFetchRequest(NSFetchRequest(entityName: "Playlist")) {
+                print("Playlists:", playlists.count)
+            }
+        }
     }
 
     private func realPitchForPitch(pitch: Int) -> Float {

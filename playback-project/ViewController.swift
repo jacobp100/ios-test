@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import CoreData
 
 
 extension UIViewController {
@@ -35,22 +36,29 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     @IBOutlet weak var playbackSlider: PlaySlider!
     @IBOutlet weak var separatorConstraint: NSLayoutConstraint!
 
+    var managedObjectContext: NSManagedObjectContext? =
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
+
     private var musicPlayer = MusicPlayer()
     private var displayLink: CADisplayLink?
-
-    private var demoJumplistItemsForSong: [Double] = [
-        30,
-        45,
-        80,
-    ]
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         addEventListeners(
             selector: #selector(ViewController.handleMediaItemUpdates),
-            events: [MusicPlayer.ITEM_DID_LOAD, MusicPlayer.ITEM_DID_CHANGE],
+            events: [
+                MusicPlayer.ITEM_DID_LOAD,
+                MusicPlayer.ITEM_DID_CHANGE,
+            ],
             object: musicPlayer
+        )
+        addEventListeners(
+            selector: #selector(ViewController.handleMediaItemUpdates),
+            events: [
+                JumplistItem.DID_UPDATE,
+            ],
+            object: nil
         )
 
         displayLink = CADisplayLink(target: self, selector: #selector(ViewController.updateTime))
@@ -59,7 +67,6 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
         separatorConstraint.constant = 1 / UIScreen.mainScreen().scale
         playbackSlider.delegate = self
-        playbackSlider.jumplistItems = demoJumplistItemsForSong
 
         UIApplication.sharedApplication().statusBarStyle = UIStatusBarStyle.LightContent
 
@@ -105,6 +112,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
             pitchTempoViewController.musicPlayer = musicPlayer
         } else if let jumpListTableViewController = viewController as? JumpListTableViewController {
             jumpListTableViewController.musicPlayer = musicPlayer
+            jumpListTableViewController.managedObjectContext = managedObjectContext
         }
     }
 
@@ -119,19 +127,32 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
     func handleMediaItemUpdates() {
         dispatch_async(dispatch_get_main_queue()) {
-            if let currentItem = self.musicPlayer.currentItem {
-                self.songLabel.text = currentItem.title
-            } else if self.musicPlayer.playlist.count > 0 {
-                self.songLabel.text = self.musicPlayer.playlist[0].title
-            } else {
+            guard let currentItem = self.getMusicPlayerCurrentItem() else {
                 self.songLabel.text = ""
+                self.playbackSlider.duration = nil
+                return
             }
-            self.playbackSlider.duration = self.musicPlayer.currentItem?.duration
+
+            self.songLabel.text = currentItem.title
+            self.playbackSlider.duration = currentItem.duration
+
+            if let jumplistItems = currentItem.model?.jumplistItems {
+                self.playbackSlider.jumplistItems = Array(jumplistItems)
+            } else {
+                self.playbackSlider.jumplistItems = []
+            }
         }
     }
 
     func updateTime() {
         playbackSlider.time = musicPlayer.currentItem?.time ?? 0
+    }
+
+    private func getMusicPlayerCurrentItem() -> MusicPlayerFile? {
+        if let currentItem = musicPlayer.currentItem {
+            return currentItem
+        }
+        return musicPlayer.playlist.first
     }
 
 }

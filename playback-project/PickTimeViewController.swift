@@ -19,6 +19,7 @@ class PickTimeViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     @IBOutlet weak var picker: UIPickerView?
 
     var duration: Double = 60 { didSet { picker?.reloadAllComponents() } }
+    var time: Double = 0 { didSet { setTime() } }
     var delegate: PickTimeDelegate?
 
     override func viewDidLoad() {
@@ -26,6 +27,8 @@ class PickTimeViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
         picker!.delegate = self
         picker!.dataSource = self
+
+        setTime()
     }
 
     override func didReceiveMemoryWarning() {
@@ -43,6 +46,14 @@ class PickTimeViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
 
     @IBAction func cancel(sender: AnyObject) {
         delegate?.pickTimeDidCancel(self)
+    }
+
+    func setTime() {
+        let minutes = Int(floor(time / 60))
+        let seconds = Int(floor(time % 60))
+        print(minutes, seconds)
+        picker?.selectRow(0, inComponent: minutes, animated: true)
+        picker?.selectRow(1, inComponent: seconds, animated: true)
     }
 
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {

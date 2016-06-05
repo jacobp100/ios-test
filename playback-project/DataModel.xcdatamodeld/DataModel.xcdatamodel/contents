@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15F34" minimumToolsVersion="Xcode 7.0">
+    <entity name="JumplistItem" representedClassName=".JumplistItem" syncable="YES">
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="mediaItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MediaItem" inverseName="jumplistItems" inverseEntity="MediaItem" syncable="YES"/>
+    </entity>
+    <entity name="Loop" syncable="YES">
+        <attribute name="end" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="start" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="tempoEnd" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="tempoLoops" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="tempoStart" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="mediaItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MediaItem" inverseName="loop" inverseEntity="MediaItem" syncable="YES"/>
+    </entity>
+    <entity name="MediaItem" representedClassName=".MediaItem" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pitch" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="tempo" optional="YES" attributeType="Integer 16" defaultValueString="100" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="jumplistItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="JumplistItem" inverseName="mediaItem" inverseEntity="JumplistItem" syncable="YES"/>
+        <relationship name="loop" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Loop" inverseName="mediaItem" inverseEntity="Loop" syncable="YES"/>
+        <relationship name="playlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Playlist" inverseName="mediaItems" inverseEntity="Playlist" syncable="YES"/>
+    </entity>
+    <entity name="Playlist" representedClassName=".Playlist" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="mediaItems" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="MediaItem" inverseName="playlist" inverseEntity="MediaItem" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="JumplistItem" positionX="153" positionY="-18" width="128" height="75"/>
+        <element name="MediaItem" positionX="-63" positionY="-18" width="128" height="148"/>
+        <element name="Playlist" positionX="-279" positionY="-18" width="128" height="73"/>
+        <element name="Loop" positionX="153" positionY="72" width="128" height="133"/>
+    </elements>
+</model>

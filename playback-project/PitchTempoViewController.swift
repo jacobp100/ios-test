@@ -39,13 +39,17 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
         setProperties()
     }
 
-    func setProperties() {
-        setPitchSliderProperties()
-        setTempoSliderProperties()
+    deinit {
+        removeEvents()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    func setProperties() {
+        setPitchSliderProperties()
+        setTempoSliderProperties()
     }
 
     func sliderViewDidChangeValue(slider: SliderView) {
@@ -55,7 +59,7 @@ class PitchTempoViewController: UIViewController, SliderViewDelegate {
         case tempoSlider!:
             musicPlayer?.tempo = tempoSlider!.value
         default:
-            print("Unknown slider. How do I throw real errors?")
+            break
         }
     }
 

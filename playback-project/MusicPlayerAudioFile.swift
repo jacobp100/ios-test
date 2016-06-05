@@ -20,9 +20,12 @@ extension AVAudioFile {
 
 class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
 
-    var url: NSURL
+    let type: String = "LibraryFile"
+    var id: String { get { return title } }
+    let url: NSURL
     var title: String
     var delegate: MusicPlayerFileDelegate?
+    var model: MediaItem?
     var loaded: Bool { get { return audioFile != nil } }
     var duration: Double? { get { return audioFile?.duration } }
     var time: Double {
@@ -113,6 +116,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
     }
 
     func stop() {
+        audioPlayerPlayingSegmentIndex += 1
         audioEngine.stop()
         if audioPlayerPlayingSegment {
             audioPlayerNode.stop()

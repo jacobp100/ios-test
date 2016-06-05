@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 
 enum JumpListActionHandler {
@@ -24,6 +25,8 @@ class JumpListAction {
 }
 
 class JumpListTableViewController: UITableViewController, PickTimeDelegate {
+
+    var managedObjectContext: NSManagedObjectContext?
 
     var musicPlayer: MusicPlayer? {
         didSet {
@@ -44,26 +47,22 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     }
 
     private var actions: [JumpListAction] = [
-        JumpListAction(title: "Bookmark Current Time", action: .AddJumpListItem)
+        JumpListAction(title: "Bookmark Time", action: .AddJumpListItem)
     ]
     private var segueIdentifier = "CurrentTimeSelection"
+    private var jumplistItems: [JumplistItem] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
+    deinit {
+        removeEvents()
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    override func observeValueForKeyPath(
-        keyPath: String?,
-        ofObject object: AnyObject?,
-                 change: [String : AnyObject]?,
-                 context: UnsafeMutablePointer<Void>
-        ) {
-        tableView.reloadData()
     }
 
     // MARK: - Table view data source
@@ -75,7 +74,7 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0
             ? actions.count
-            : 5
+            : jumplistItems.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -93,7 +92,14 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
             let action = actions[indexPath.row]
             cell.textLabel?.text = action.title
         } else {
-            cell.textLabel?.text = ":D"
+            let formatter = NSDateComponentsFormatter()
+            formatter.zeroFormattingBehavior = .Pad
+            formatter.allowedUnits = [.Minute, .Second]
+            if let time = jumplistItems[indexPath.row].time as? Double {
+                cell.textLabel?.text = formatter.stringFromTimeInterval(time)
+            } else {
+                cell.textLabel?.text = ":O"
+            }
         }
 
         return cell
@@ -119,14 +125,37 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
         if segue.identifier == segueIdentifier {
             let pickTimeViewController = segue.destinationViewController as? PickTimeViewController
             pickTimeViewController?.delegate = self
-            print(musicPlayer?.currentItem?.duration)
             pickTimeViewController?.duration = musicPlayer?.currentItem?.duration ?? 0
+
+            if let time = musicPlayer?.currentItem?.time {
+                pickTimeViewController?.time = time
+            }
         }
     }
 
     func pickTimeDidPickTime(sender: PickTimeViewController, time: Double) {
-        print(time)
         dismissViewControllerAnimated(true, completion: nil)
+
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        guard let mediaItem = musicPlayer?.currentItem?.model else {
+            return
+        }
+
+        context.performBlock {
+            guard let _ = JumplistItem.jumplistItemForMediaItemTime(mediaItem, time: time, context: context) else {
+                return
+            }
+
+            self.reload()
+
+            guard let _ = try? context.save() else {
+                print("Fuck")
+                return
+            }
+        }
     }
 
     func pickTimeDidCancel(sender: PickTimeViewController) {
@@ -140,6 +169,20 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     }
 
     func reload() {
+        if let jumplistSet = musicPlayer?.currentItem?.model?.jumplistItems {
+            jumplistItems = Array(jumplistSet)
+//            .map {
+//                $0.time ?? -1.0
+//            }
+//            .filter {
+//                $0 >= 0
+//            }.sort {
+//                $0 < $1
+//            }
+        } else {
+            jumplistItems = []
+        }
+
         dispatch_async(dispatch_get_main_queue()) {
             self.tableView?.reloadData()
         }
