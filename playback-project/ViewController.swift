@@ -47,17 +47,12 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
         addEventListeners(
             selector: #selector(ViewController.handleMediaItemUpdates),
-            events: [
-                MusicPlayer.ITEM_DID_LOAD,
-                MusicPlayer.ITEM_DID_CHANGE,
-            ],
+            events: [MusicPlayer.ITEM_DID_LOAD, MusicPlayer.ITEM_DID_CHANGE],
             object: musicPlayer
         )
         addEventListeners(
             selector: #selector(ViewController.handleMediaItemUpdates),
-            events: [
-                JumplistItem.DID_UPDATE,
-            ],
+            events: [JumplistItem.DID_UPDATE],
             object: nil
         )
 
@@ -117,12 +112,16 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     }
 
     func playSliderDidTogglePlaying(playSlider: PlaySlider) {
-        musicPlayer.play()
+        if musicPlayer.playing {
+            musicPlayer.pause()
+        } else {
+            musicPlayer.play()
+        }
     }
 
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double) {
         playbackSlider.time = value // Stop jumping back whilst loading
-        musicPlayer.seek(value)
+        musicPlayer.play(value)
     }
 
     func handleMediaItemUpdates() {

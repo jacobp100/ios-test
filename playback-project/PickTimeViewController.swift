@@ -51,9 +51,8 @@ class PickTimeViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
     func setTime() {
         let minutes = Int(floor(time / 60))
         let seconds = Int(floor(time % 60))
-        print(minutes, seconds)
-        picker?.selectRow(0, inComponent: minutes, animated: true)
-        picker?.selectRow(1, inComponent: seconds, animated: true)
+        picker?.selectRow(minutes, inComponent: 0, animated: false)
+        picker?.selectRow(seconds, inComponent: 1, animated: false)
     }
 
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {

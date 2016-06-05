@@ -51,6 +51,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
     private var audioPlayerNode = AVAudioPlayerNode()
     private var timePitchNode = AVAudioUnitTimePitch()
     private var seekingTimeOffset: Double? = nil
+    private var pauseTime: Double? = nil
 
     init(title: String, url: NSURL) {
         self.title = title
@@ -74,7 +75,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
         }
     }
 
-    func seek(time: Double) {
+    func play(time: Double?) {
         audioPlayerPlayingSegmentIndex += 1
         let currentPlayingIndex = audioPlayerPlayingSegmentIndex
 
@@ -88,10 +89,22 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
 
         let currentFile = audioFile!
 
-        if time < currentFile.duration {
-            seekingTimeOffset = time
+        var seekTime: Double
 
-            let startingFrame = currentFile.sampleRate * time
+        if let timeValue = time {
+            seekTime = timeValue
+        } else if let pauseTimeValue = pauseTime {
+            seekTime = pauseTimeValue
+        } else {
+            seekTime = 0
+        }
+
+        pauseTime = nil
+
+        if seekTime < currentFile.duration {
+            seekingTimeOffset = seekTime
+
+            let startingFrame = currentFile.sampleRate * seekTime
 
             audioPlayerNode.scheduleSegment(
                 currentFile,
@@ -115,7 +128,18 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
         }
     }
 
+    func pause() {
+        pauseTime = time
+        seekingTimeOffset = time
+        stopPause()
+    }
+
     func stop() {
+        pauseTime = nil
+        stopPause()
+    }
+
+    private func stopPause() {
         audioPlayerPlayingSegmentIndex += 1
         audioEngine.stop()
         if audioPlayerPlayingSegment {

@@ -116,9 +116,12 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
             switch actions[indexPath.row].action {
             case .AddJumpListItem:
                 performSegueWithIdentifier(segueIdentifier, sender: self)
-                deselect()
             }
+        } else if let time = jumplistItems[indexPath.row].time as? Double {
+            musicPlayer?.play(time)
         }
+
+        deselect()
     }
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -171,14 +174,6 @@ class JumpListTableViewController: UITableViewController, PickTimeDelegate {
     func reload() {
         if let jumplistSet = musicPlayer?.currentItem?.model?.jumplistItems {
             jumplistItems = Array(jumplistSet)
-//            .map {
-//                $0.time ?? -1.0
-//            }
-//            .filter {
-//                $0 >= 0
-//            }.sort {
-//                $0 < $1
-//            }
         } else {
             jumplistItems = []
         }

@@ -29,7 +29,8 @@ protocol MusicPlayerFile: class {
     var pitch: Float { get set }
     var tempo: Float { get set }
     func enque()
-    func seek(time: Double)
+    func play(time: Double?)
+    func pause()
     func stop()
 }
 
@@ -75,7 +76,7 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
     private struct SeekItem {
         var item: MusicPlayerFile
-        var time: Double
+        var time: Double?
     }
     private var seekItem: SeekItem?
 
@@ -108,18 +109,10 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     }
 
     func play() {
-        seek(0)
+        play(nil)
     }
 
-    func stop() {
-        if let item = currentItem {
-            item.stop()
-        }
-
-        playing = false
-    }
-
-    func seek(time: Double) {
+    func play(time: Double?) {
         if currentIndex < 0 {
             currentIndex = 0
         }
@@ -130,7 +123,8 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
         if item.loaded {
             seekItem = nil
-            item.seek(time)
+            item.play(time)
+            playing = true
             return
         }
 
@@ -140,6 +134,22 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
             loadItem(item)
             item.enque()
         }
+    }
+
+    func stop() {
+        if let item = currentItem {
+            item.stop()
+        }
+
+        playing = false
+    }
+
+    func pause() {
+        if let item = currentItem {
+            item.pause()
+        }
+
+        playing = false
     }
 
     private func loadItem(item: MusicPlayerFile) {
@@ -153,7 +163,7 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     private func playNext() {
         if currentIndex < playlist.count - 1 {
             currentIndex += 1
-            seek(0)
+            play(0)
         } else {
             stop()
         }
@@ -162,7 +172,7 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     func musicPlayerFileDidLoad(sender: MusicPlayerFile) {
         if let currentSeekItem = seekItem where currentSeekItem.item === sender {
             emitEvent(MusicPlayer.ITEM_DID_LOAD)
-            seek(currentSeekItem.time)
+            play(currentSeekItem.time)
         }
     }
 
@@ -200,23 +210,6 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
             guard let _ = try? context.save() else {
                 print("Fuck")
                 return
-            }
-        }
-
-        printDb()
-    }
-
-    private func printDb() {
-        guard let context = managedObjectContext else {
-            return
-        }
-
-        context.performBlock {
-            if let mediaItems = try? context.executeFetchRequest(NSFetchRequest(entityName: "MediaItem")) {
-                print("Media items:", mediaItems.count)
-            }
-            if let playlists = try? context.executeFetchRequest(NSFetchRequest(entityName: "Playlist")) {
-                print("Playlists:", playlists.count)
             }
         }
     }
