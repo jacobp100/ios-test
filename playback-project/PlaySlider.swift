@@ -42,7 +42,7 @@ class PlaySlider: UIControl {
         }
     }
     @IBInspectable
-    var editing: Bool = true
+    var editing: Bool = false
     @IBInspectable
     var start: Double = 40
     @IBInspectable
@@ -257,27 +257,25 @@ class PlaySlider: UIControl {
         }
         playPauseButton.path = playPausePath.CGPath
 
-//        let buttonRect = rectForButton()
+        let previousNextRect = editing
+            ? CGRect(x: 0, y: 0, width: sliderSize * 1.5, height: sliderSize)
+            : CGRect(x: 0, y: 0, width: sliderSize, height: sliderSize)
 
         let previousPath = UIBezierPath()
-//        drawCircleInRect(previousPath, frame: buttonRect)
-//        drawPreviousButton(previousPath, frame: buttonRect)
-        drawRightArrow(previousPath, frame: CGRect(
-            x: 0,
-            y: 0,
-            width: sliderSize * 1.5,
-            height: sliderSize
-        ))
+        if editing {
+            drawRightArrow(previousPath, frame: previousNextRect)
+        } else {
+            drawCircleInRect(previousPath, frame: previousNextRect)
+            drawPreviousButton(previousPath, frame: previousNextRect)
+        }
 
         let nextPath = UIBezierPath()
-//        drawCircleInRect(nextPath, frame: buttonRect)
-//        drawNextButton(nextPath, frame: buttonRect)
-        drawLeftArrow(nextPath, frame: CGRect(
-            x: 0,
-            y: 0,
-            width: sliderSize * 1.5,
-            height: sliderSize
-        ))
+        if editing {
+            drawLeftArrow(nextPath, frame: previousNextRect)
+        } else {
+            drawCircleInRect(nextPath, frame: previousNextRect)
+            drawNextButton(nextPath, frame: previousNextRect)
+        }
 
         previousButton.path = previousPath.CGPath
         nextButton.path = nextPath.CGPath
@@ -329,15 +327,15 @@ class PlaySlider: UIControl {
                 return
             }
 
+            if editing && (time < startValue || time > endValue) {
+                return
+            }
+
             let x = getSliderPosition(time)! + sliderSize / 2 - offset
             let centrePoint = CGPoint(x: x, y: sliderY)
             var y = sliderY
 
-            if time < startValue || time > endValue {
-                return
-            }
-
-            if playPauseButtonFrame.contains(centrePoint) {
+            if !editing && playPauseButtonFrame.contains(centrePoint) {
                 let r = sliderSize / 2 - lineWidth / 2
                 let x = x - playPauseButtonFrame.midX
                 let dy = abs(x) < r
