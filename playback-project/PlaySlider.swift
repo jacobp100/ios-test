@@ -44,9 +44,9 @@ class PlaySlider: UIControl {
     @IBInspectable
     var editing: Bool = true
     @IBInspectable
-    var start: Double = 50
+    var start: Double = 40
     @IBInspectable
-    var end: Double = 150
+    var end: Double = 120
     @IBInspectable
     var jumplistSize: CGFloat = 5
     @IBInspectable
@@ -181,19 +181,19 @@ class PlaySlider: UIControl {
             nextButton.frame = CGRect(x: width - sliderSize, y: jumplistSize, width: sliderSize, height: sliderSize)
         } else if let startPosition = getSliderPosition(start), let endPosition = getSliderPosition(end) {
             previousButton.frame = CGRect(
-                x: startPosition - 1.5 * sliderSize,
+                x: startPosition,
                 y: jumplistSize,
                 width: 1.5 * sliderSize,
                 height: sliderSize
             )
             playPauseButton.frame = CGRect(
-                x: startPosition,
+                x: startPosition + 1.5 * sliderSize,
                 y: jumplistSize,
                 width: endPosition - startPosition,
                 height: sliderSize
             )
             nextButton.frame = CGRect(
-                x: endPosition,
+                x: endPosition + 1.5 * sliderSize,
                 y: jumplistSize,
                 width: 1.5 * sliderSize,
                 height: sliderSize
@@ -272,8 +272,9 @@ class PlaySlider: UIControl {
     private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat) {
         let sliderY = playPauseButton.frame.midY - jumplistSize
         let sliderWidth = playPauseButton.frame.width
+        let offset = playPauseButton.frame.minX - sliderSize
 
-        let playPauseButtonFrame = rectForButton(sliderPosition)
+        let playPauseButtonFrame = rectForButton(sliderPosition).offsetBy(dx: -offset, dy: 0)
 
         jumplistItems.forEach {
             jumplistItem in
@@ -281,9 +282,13 @@ class PlaySlider: UIControl {
                 return
             }
 
-            let x = getSliderPosition(time)! + sliderSize / 2
+            let x = getSliderPosition(time)! + sliderSize / 2 - offset
             let centrePoint = CGPoint(x: x, y: sliderY)
             var y = sliderY
+
+            if x < 0 || x > sliderWidth {
+                return
+            }
 
             if playPauseButtonFrame.contains(centrePoint) {
                 let r = sliderSize / 2 - lineWidth / 2
@@ -298,8 +303,8 @@ class PlaySlider: UIControl {
         }
 
         if !editing {
-            drawPauseButton(ctx, frame: playPauseButtonFrame)
             drawCircleInRect(ctx, frame: playPauseButtonFrame)
+            drawPauseButton(ctx, frame: playPauseButtonFrame)
             drawLineBetween(ctx, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
             drawLineBetween(ctx, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
         } else {
