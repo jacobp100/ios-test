@@ -57,6 +57,13 @@ class PlaySlider: UIControl {
     var delegate: PlaySliderDelegate?
     var jumplistItems: [JumplistItem] = []
 
+    private enum DragItem {
+        case None
+        case Time
+        case Start
+        case End
+    }
+
     private var playPauseButton = ShapeButton()
     private var previousButton = ShapeButton()
     private var nextButton = ShapeButton()
@@ -65,7 +72,8 @@ class PlaySlider: UIControl {
     private var panGestureRecognizer: UIPanGestureRecognizer!
     private var tapGestureRecognizer: UITapGestureRecognizer!
     private var isDragging = false
-    private var dragPosition: Double = -1 { didSet { setNeedsLayout() } }
+    private var dragItem: DragItem = .None
+    private var dragPosition: Double? { didSet { setNeedsLayout() } }
     private var padding: CGFloat = 8
     private var sliderSize: CGFloat {
         get {
@@ -79,11 +87,9 @@ class PlaySlider: UIControl {
     }
     private var sliderPosition: CGFloat {
         get {
-            let sliderValue = isDragging && dragPosition >= 0
-                ? dragPosition
-                : time
+            let timeValue = dragItem == .Time ? (dragPosition ?? time) : time
             if let currentDuration = duration {
-                return (frame.size.width - 3 * sliderSize) * CGFloat(sliderValue / currentDuration)
+                return (frame.size.width - 3 * sliderSize) * CGFloat(timeValue / currentDuration)
             }
             return 0
         }
@@ -91,6 +97,14 @@ class PlaySlider: UIControl {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+
+        [playPauseButton, previousButton, nextButton].forEach {
+            $0.addTarget(
+                self,
+                action: #selector(setDragItem(_:)),
+                forControlEvents: .TouchDown
+            )
+        }
 
         panGestureRecognizer = UIPanGestureRecognizer(
             target: self,
@@ -107,7 +121,7 @@ class PlaySlider: UIControl {
 
         playPauseButton.addTarget(
             self,
-            action: #selector(PlaySlider.playButtonPressed),
+            action: #selector(playButtonPressed),
             forControlEvents: .TouchUpInside
         )
 
@@ -133,7 +147,10 @@ class PlaySlider: UIControl {
     }
 
     func playButtonPressed() {
-        delegate?.playSliderDidTogglePlaying(self)
+        if dragItem == .Time {
+            delegate?.playSliderDidTogglePlaying(self)
+        }
+        dragItem = .None
     }
 
     func handlePan(recognizer: UIPanGestureRecognizer) {
@@ -141,11 +158,31 @@ class PlaySlider: UIControl {
         case .Began:
             isDragging = true
         case .Ended:
-            delegate?.playSliderValueDidChange(self, value: dragPosition)
+            let currentDragPosition = dragPosition
             isDragging = false
-            dragPosition = -1
+            dragPosition = nil
+
+            guard let position = currentDragPosition else {
+                return
+            }
+
+            if dragItem == .Time {
+                delegate?.playSliderValueDidChange(self, value: position)
+            } else if dragItem == .Start {
+                start = position
+            } else if dragItem == .End {
+                end = position
+            }
         case .Changed:
-            if let t = tForGesture(recognizer, snap: jumplistDragSnap) {
+            guard let t = tForGesture(recognizer, snap: jumplistDragSnap) else {
+                return
+            }
+
+            if dragItem == .Start {
+                dragPosition = min(t, end)
+            } else if dragItem == .End {
+                dragPosition = max(t, start)
+            } else {
                 dragPosition = t
             }
         default:
@@ -159,11 +196,25 @@ class PlaySlider: UIControl {
         }
     }
 
+    func setDragItem(sender: AnyObject) {
+        if sender === playPauseButton {
+            dragItem = .Time
+        } else if sender === previousButton {
+            dragItem = .Start
+        } else if sender === nextButton {
+            dragItem = .End
+        }
+    }
+
     override func layoutSubviews() {
         let width = frame.size.width
         let height = frame.size.height
 
-        layoutLabel(currentTimeLabel, value: isDragging ? dragPosition : time)
+        let timeValue = dragItem == .Time ? (dragPosition ?? time) : time
+        let startValue = dragItem == .Start ? (dragPosition ?? start) : start
+        let endValue = dragItem == .End ? (dragPosition ?? end) : end
+
+        layoutLabel(currentTimeLabel, value: timeValue)
         layoutLabel(totalDurationLabel, value: duration)
 
         currentTimeLabel.frame = currentTimeLabel.frame.moveTo(
@@ -179,7 +230,7 @@ class PlaySlider: UIControl {
             previousButton.frame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
             playPauseButton.frame = CGRect(x: sliderSize, y: jumplistSize, width: sliderWidth, height: sliderSize)
             nextButton.frame = CGRect(x: width - sliderSize, y: jumplistSize, width: sliderSize, height: sliderSize)
-        } else if let startPosition = getSliderPosition(start), let endPosition = getSliderPosition(end) {
+        } else if let startPosition = getSliderPosition(startValue), let endPosition = getSliderPosition(endValue) {
             previousButton.frame = CGRect(
                 x: startPosition,
                 y: jumplistSize,
@@ -200,13 +251,9 @@ class PlaySlider: UIControl {
             )
         }
 
-        let sliderValue = isDragging && dragPosition >= 0
-            ? dragPosition
-            : time
-
         let playPausePath = UIBezierPath()
-        if let sliderPosition = getSliderPosition(sliderValue) {
-            drawSlider(playPausePath, sliderPosition: sliderPosition)
+        if let sliderPosition = getSliderPosition(timeValue) {
+            drawSlider(playPausePath, sliderPosition: sliderPosition, startValue: startValue, endValue: endValue)
         }
         playPauseButton.path = playPausePath.CGPath
 
@@ -269,7 +316,7 @@ class PlaySlider: UIControl {
         )
     }
 
-    private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat) {
+    private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat, startValue: Double, endValue: Double) {
         let sliderY = playPauseButton.frame.midY - jumplistSize
         let sliderWidth = playPauseButton.frame.width
         let offset = playPauseButton.frame.minX - sliderSize
@@ -286,7 +333,7 @@ class PlaySlider: UIControl {
             let centrePoint = CGPoint(x: x, y: sliderY)
             var y = sliderY
 
-            if x < 0 || x > sliderWidth {
+            if time < startValue || time > endValue {
                 return
             }
 
