@@ -42,6 +42,12 @@ class PlaySlider: UIControl {
         }
     }
     @IBInspectable
+    var editing: Bool = true
+    @IBInspectable
+    var start: Double = 50
+    @IBInspectable
+    var end: Double = 150
+    @IBInspectable
     var jumplistSize: CGFloat = 5
     @IBInspectable
     var jumplistDragSnap: CGFloat = 5
@@ -169,9 +175,30 @@ class PlaySlider: UIControl {
             y: height - totalDurationLabel.frame.height
         )
 
-        previousButton.frame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
-        playPauseButton.frame = CGRect(x: sliderSize, y: jumplistSize, width: sliderWidth, height: sliderSize)
-        nextButton.frame = CGRect(x: width - sliderSize, y: jumplistSize, width: sliderSize, height: sliderSize)
+        if !editing {
+            previousButton.frame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
+            playPauseButton.frame = CGRect(x: sliderSize, y: jumplistSize, width: sliderWidth, height: sliderSize)
+            nextButton.frame = CGRect(x: width - sliderSize, y: jumplistSize, width: sliderSize, height: sliderSize)
+        } else if let startPosition = getSliderPosition(start), let endPosition = getSliderPosition(end) {
+            previousButton.frame = CGRect(
+                x: startPosition - 1.5 * sliderSize,
+                y: jumplistSize,
+                width: 1.5 * sliderSize,
+                height: sliderSize
+            )
+            playPauseButton.frame = CGRect(
+                x: startPosition,
+                y: jumplistSize,
+                width: endPosition - startPosition,
+                height: sliderSize
+            )
+            nextButton.frame = CGRect(
+                x: endPosition,
+                y: jumplistSize,
+                width: 1.5 * sliderSize,
+                height: sliderSize
+            )
+        }
 
         let sliderValue = isDragging && dragPosition >= 0
             ? dragPosition
@@ -183,15 +210,27 @@ class PlaySlider: UIControl {
         }
         playPauseButton.path = playPausePath.CGPath
 
-        let buttonRect = rectForButton()
+//        let buttonRect = rectForButton()
 
         let previousPath = UIBezierPath()
-        drawCircleInRect(previousPath, frame: buttonRect)
-        drawPreviousButton(previousPath, frame: buttonRect)
+//        drawCircleInRect(previousPath, frame: buttonRect)
+//        drawPreviousButton(previousPath, frame: buttonRect)
+        drawRightArrow(previousPath, frame: CGRect(
+            x: 0,
+            y: 0,
+            width: sliderSize * 1.5,
+            height: sliderSize
+        ))
 
         let nextPath = UIBezierPath()
-        drawCircleInRect(nextPath, frame: buttonRect)
-        drawNextButton(nextPath, frame: buttonRect)
+//        drawCircleInRect(nextPath, frame: buttonRect)
+//        drawNextButton(nextPath, frame: buttonRect)
+        drawLeftArrow(nextPath, frame: CGRect(
+            x: 0,
+            y: 0,
+            width: sliderSize * 1.5,
+            height: sliderSize
+        ))
 
         previousButton.path = previousPath.CGPath
         nextButton.path = nextPath.CGPath
@@ -232,6 +271,7 @@ class PlaySlider: UIControl {
 
     private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat) {
         let sliderY = playPauseButton.frame.midY - jumplistSize
+        let sliderWidth = playPauseButton.frame.width
 
         let playPauseButtonFrame = rectForButton(sliderPosition)
 
@@ -257,15 +297,85 @@ class PlaySlider: UIControl {
             drawLineBetween(ctx, x: x, y1: y, y2: y - jumplistSize)
         }
 
-        drawPauseButton(ctx, frame: playPauseButtonFrame)
-        drawCircleInRect(ctx, frame: playPauseButtonFrame)
-        drawLineBetween(ctx, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
-        drawLineBetween(ctx, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
+        if !editing {
+            drawPauseButton(ctx, frame: playPauseButtonFrame)
+            drawCircleInRect(ctx, frame: playPauseButtonFrame)
+            drawLineBetween(ctx, x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
+            drawLineBetween(ctx, x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
+        } else {
+            drawLineBetween(ctx, x1: 0, x2: sliderWidth, y: sliderY)
+        }
     }
 
     private func drawCircleInRect(ctx: UIBezierPath, frame: CGRect) {
         let dx = lineWidth / 2
         ctx.appendPath(UIBezierPath(ovalInRect: frame.insetBy(dx: dx, dy: dx)))
+    }
+
+    private func drawRightArrow(ctx: UIBezierPath, frame: CGRect) {
+        let midY = frame.midY
+        let leftOriginX = midY
+        let rightOriginX = frame.width - CGFloat(M_SQRT2) * frame.height / 2
+        let r = frame.height / 2 - lineWidth / 2
+
+        ctx.addArcWithCenter(
+            CGPoint(x: rightOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(0.25 * M_PI),
+            endAngle: CGFloat(0.5 * M_PI),
+            clockwise: true
+        )
+        ctx.addLineToPoint(CGPoint(x: leftOriginX, y: frame.height - lineWidth / 2))
+        ctx.addArcWithCenter(
+            CGPoint(x: leftOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(0.5 * M_PI),
+            endAngle: CGFloat(1.5 * M_PI),
+            clockwise: true
+        )
+        ctx.addLineToPoint(CGPoint(x: rightOriginX, y: lineWidth / 2))
+        ctx.addArcWithCenter(
+            CGPoint(x: rightOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(1.5 * M_PI),
+            endAngle: CGFloat(1.75 * M_PI),
+            clockwise: true
+        )
+        ctx.addLineToPoint(CGPoint(x: frame.width - lineWidth / 2, y: midY))
+        ctx.closePath()
+    }
+
+    private func drawLeftArrow(ctx: UIBezierPath, frame: CGRect) {
+        let midY = frame.midY
+        let leftOriginX = CGFloat(M_SQRT2) * frame.height / 2
+        let rightOriginX = frame.width - midY
+        let r = frame.height / 2 - lineWidth / 2
+
+        ctx.addArcWithCenter(
+            CGPoint(x: leftOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(0.75 * M_PI),
+            endAngle: CGFloat(0.5 * M_PI),
+            clockwise: false
+        )
+        ctx.addLineToPoint(CGPoint(x: rightOriginX, y: frame.height - lineWidth / 2))
+        ctx.addArcWithCenter(
+            CGPoint(x: rightOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(0.5 * M_PI),
+            endAngle: CGFloat(1.5 * M_PI),
+            clockwise: false
+        )
+        ctx.addLineToPoint(CGPoint(x: leftOriginX, y: lineWidth / 2))
+        ctx.addArcWithCenter(
+            CGPoint(x: leftOriginX, y: midY),
+            radius: r,
+            startAngle: CGFloat(1.5 * M_PI),
+            endAngle: CGFloat(1.25 * M_PI),
+            clockwise: false
+        )
+        ctx.addLineToPoint(CGPoint(x: lineWidth / 2, y: midY))
+        ctx.closePath()
     }
 
     private func drawLineBetween(ctx: UIBezierPath, x1: CGFloat, x2: CGFloat, y1: CGFloat, y2: CGFloat) {
