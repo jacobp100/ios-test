@@ -407,10 +407,10 @@
             </objects>
             <point key="canvasLocation" x="1598" y="673"/>
         </scene>
-        <!--View Controller-->
+        <!--Loop View Controller-->
         <scene sceneID="p40-K6-pqK">
             <objects>
-                <viewController id="S1g-xP-9dm" sceneMemberID="viewController">
+                <viewController id="S1g-xP-9dm" customClass="LoopViewController" customModule="playback_project" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Qnr-dA-Ca4"/>
                         <viewControllerLayoutGuide type="bottom" id="TLr-Kc-WlS"/>

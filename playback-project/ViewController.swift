@@ -101,6 +101,8 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     }
 
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        var isLooping = false
+
         if let playlistTableViewController = viewController as? PlaylistTableViewController {
             playlistTableViewController.musicPlayer = musicPlayer
         } else if let pitchTempoViewController = viewController as? PitchTempoViewController {
@@ -108,7 +110,19 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
         } else if let jumpListTableViewController = viewController as? JumpListTableViewController {
             jumpListTableViewController.musicPlayer = musicPlayer
             jumpListTableViewController.managedObjectContext = managedObjectContext
+        } else if let loopViewController = viewController as? LoopViewController {
+            if let duration = musicPlayer.currentItem?.duration {
+                let currentTime = playbackSlider.time
+                let start = min(currentTime, duration - 30)
+                let end = min(currentTime + 30, duration)
+                playbackSlider.start = start
+                playbackSlider.end = end
+            }
+            loopViewController.musicPlayer = musicPlayer
+            isLooping = true
         }
+
+        playbackSlider.editing = isLooping
     }
 
     func playSliderDidTogglePlaying(playSlider: PlaySlider) {
