@@ -115,6 +115,7 @@
                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" constant="20" id="1gT-3C-axS"/>
+                            <constraint firstAttribute="trailing" secondItem="aj1-cU-Zhf" secondAttribute="trailing" id="7KP-xD-cox"/>
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="36" id="EQt-fj-pIZ"/>
                             <constraint firstAttribute="leadingMargin" secondItem="zw0-dv-97D" secondAttribute="leading" id="GID-aa-cBQ"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="top" secondItem="hGy-ta-TkG" secondAttribute="bottom" id="IUT-oD-Bvg"/>
@@ -124,6 +125,7 @@
                             <constraint firstItem="nsO-Eg-AVp" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="Zw2-4h-mLE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zw0-dv-97D" secondAttribute="trailing" id="aq0-Dk-AM3"/>
                             <constraint firstItem="hGy-ta-TkG" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" id="fnc-Hp-Hfb"/>
+                            <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="gNZ-Xd-MeI"/>
                             <constraint firstAttribute="trailingMargin" secondItem="hGy-ta-TkG" secondAttribute="trailing" constant="-20" id="nqE-dp-aXM"/>
                             <constraint firstItem="aj1-cU-Zhf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-20" id="poa-Yd-ViE"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="aj1-cU-Zhf" secondAttribute="bottom" id="sqc-iD-cnj"/>
@@ -138,6 +140,8 @@
                             <mask key="constraints">
                                 <exclude reference="GID-aa-cBQ"/>
                                 <exclude reference="aq0-Dk-AM3"/>
+                                <exclude reference="1gT-3C-axS"/>
+                                <exclude reference="poa-Yd-ViE"/>
                             </mask>
                         </variation>
                     </view>
@@ -283,7 +287,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="73X-e2-RaL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1255" y="363"/>
+            <point key="canvasLocation" x="1255" y="369"/>
         </scene>
         <!--Jump List Table View Controller-->
         <scene sceneID="AVT-46-qsv">
@@ -415,10 +419,48 @@
                         <viewControllerLayoutGuide type="top" id="Qnr-dA-Ca4"/>
                         <viewControllerLayoutGuide type="bottom" id="TLr-Kc-WlS"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="Ivy-Fy-lwI">
+                    <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" id="Ivy-Fy-lwI">
                         <rect key="frame" x="0.0" y="0.0" width="240" height="191"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t38-xh-aMf">
+                                <rect key="frame" x="16" y="8" width="208" height="70"/>
+                                <fontDescription key="fontDescription" type="system" weight="ultraLight" pointSize="48"/>
+                                <state key="normal" title="Play"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Increase tempo by 0% per loop" lineBreakMode="wordWrap" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6g-3r-Nmk">
+                                <rect key="frame" x="16" y="86" width="208" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="RuH-Gs-Fk5">
+                                <rect key="frame" x="16" y="115" width="94" height="29"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="94" id="3wd-zG-mys"/>
+                                </constraints>
+                            </stepper>
+                        </subviews>
+                        <color key="backgroundColor" red="0.098039215690000001" green="0.098039215690000001" blue="0.1019607843" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="tintColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="t38-xh-aMf" firstAttribute="leading" secondItem="Ivy-Fy-lwI" secondAttribute="leadingMargin" id="0wI-xp-VuF"/>
+                            <constraint firstItem="c6g-3r-Nmk" firstAttribute="top" secondItem="t38-xh-aMf" secondAttribute="bottom" constant="8" id="4fE-2E-uCj"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="c6g-3r-Nmk" secondAttribute="leading" id="7W8-9v-F7s"/>
+                            <constraint firstItem="RuH-Gs-Fk5" firstAttribute="leading" secondItem="Ivy-Fy-lwI" secondAttribute="leadingMargin" id="BEk-7R-s7V"/>
+                            <constraint firstItem="RuH-Gs-Fk5" firstAttribute="top" secondItem="c6g-3r-Nmk" secondAttribute="bottom" constant="8" id="SlB-UC-8ih"/>
+                            <constraint firstItem="RuH-Gs-Fk5" firstAttribute="top" secondItem="c6g-3r-Nmk" secondAttribute="bottom" constant="8" id="W8p-n1-Opd"/>
+                            <constraint firstItem="c6g-3r-Nmk" firstAttribute="leading" secondItem="Ivy-Fy-lwI" secondAttribute="leadingMargin" id="bBa-Do-QTN"/>
+                            <constraint firstItem="c6g-3r-Nmk" firstAttribute="trailing" secondItem="Ivy-Fy-lwI" secondAttribute="trailingMargin" id="kD0-vg-2EP"/>
+                            <constraint firstItem="t38-xh-aMf" firstAttribute="top" secondItem="Qnr-dA-Ca4" secondAttribute="bottom" constant="8" symbolic="YES" id="qai-1Y-PcQ"/>
+                            <constraint firstItem="t38-xh-aMf" firstAttribute="trailing" secondItem="Ivy-Fy-lwI" secondAttribute="trailingMargin" id="r72-yr-EvP"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="7W8-9v-F7s"/>
+                                <exclude reference="SlB-UC-8ih"/>
+                            </mask>
+                        </variation>
                     </view>
                     <tabBarItem key="tabBarItem" systemItem="search" id="Pci-Nb-UZY"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

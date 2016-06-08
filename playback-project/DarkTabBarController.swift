@@ -14,6 +14,7 @@ class DarkTabBarController: UITabBarController {
         super.viewDidLoad()
 
         tabBar.barStyle = .Black
+        tabBar.translucent = true
         tabBar.tintColor = UIColor.whiteColor()
     }
 
