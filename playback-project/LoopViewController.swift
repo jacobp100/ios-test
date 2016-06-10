@@ -10,15 +10,26 @@ import UIKit
 
 class LoopViewController: UIViewController {
 
-    var musicPlayer: MusicPlayer?
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet weak var stackView: UIStackView!
 
+    var musicPlayer: MusicPlayer?
     override func viewDidLoad() {
         super.viewDidLoad()
+
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        scrollView.contentSize.height =
+            stackView.frame.height +
+            bottomLayoutGuide.length +
+            scrollView.layoutMargins.bottom
     }
 
     /*
