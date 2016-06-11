@@ -11,6 +11,7 @@ import UIKit
 protocol PlaySliderDelegate {
     func playSliderDidTogglePlaying(playSlider: PlaySlider)
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double)
+    func playSliderLoopDidChange(playSlider: PlaySlider, loop: Loop)
 }
 
 extension CGRect {
@@ -42,18 +43,13 @@ class PlaySlider: UIControl {
         }
     }
     @IBInspectable
-    var editing: Bool = false
-    @IBInspectable
-    var start: Double = 40
-    @IBInspectable
-    var end: Double = 120
-    @IBInspectable
     var jumplistSize: CGFloat = 5
     @IBInspectable
     var jumplistDragSnap: CGFloat = 5
     @IBInspectable
     var jumplistTapSnap: CGFloat = 10
 
+    var loop: Loop?
     var delegate: PlaySliderDelegate?
     var jumplistItems: [JumplistItem] = []
 
@@ -168,19 +164,21 @@ class PlaySlider: UIControl {
 
             if dragItem == .Time {
                 delegate?.playSliderValueDidChange(self, value: position)
-            } else if dragItem == .Start {
-                start = position
-            } else if dragItem == .End {
-                end = position
+            } else if let end = loop?.end where dragItem == .Start {
+                let newLoop = Loop(start: position, end: end)
+                delegate?.playSliderLoopDidChange(self, loop: newLoop)
+            } else if let start = loop?.start where dragItem == .End {
+                let newLoop = Loop(start: start, end: position)
+                delegate?.playSliderLoopDidChange(self, loop: newLoop)
             }
         case .Changed:
             guard let t = tForGesture(recognizer, snap: jumplistDragSnap) else {
                 return
             }
 
-            if dragItem == .Start {
+            if let end = loop?.end where dragItem == .Start {
                 dragPosition = min(t, end)
-            } else if dragItem == .End {
+            } else if let start = loop?.start where dragItem == .End {
                 dragPosition = max(t, start)
             } else {
                 dragPosition = t
@@ -210,12 +208,17 @@ class PlaySlider: UIControl {
         let width = frame.size.width
         let height = frame.size.height
 
-        let timeValue = dragItem == .Time ? (dragPosition ?? time) : time
-        let startValue = dragItem == .Start ? (dragPosition ?? start) : start
-        let endValue = dragItem == .End ? (dragPosition ?? end) : end
+        let currentTime = dragItem == .Time ? (dragPosition ?? time) : time
+        var loopStart: Double?
+        var loopEnd: Double?
 
-        layoutLabel(currentTimeLabel, value: editing ? startValue : timeValue)
-        layoutLabel(totalDurationLabel, value: editing ? endValue : duration)
+        if let currentLoop = loop {
+            loopStart = dragItem == .Start ? (dragPosition ?? currentLoop.start) : currentLoop.start
+            loopEnd = dragItem == .End ? (dragPosition ?? currentLoop.end) : currentLoop.end
+        }
+
+        layoutLabel(currentTimeLabel, value: loopStart ?? currentTime)
+        layoutLabel(totalDurationLabel, value: loopEnd ?? duration)
 
         currentTimeLabel.frame = currentTimeLabel.frame.moveTo(
             x: 0,
@@ -226,15 +229,20 @@ class PlaySlider: UIControl {
             y: height - totalDurationLabel.frame.height
         )
 
-        if !editing {
-            let basePreviousNextFrame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
-            previousButton.frame = basePreviousNextFrame
-            nextButton.frame = basePreviousNextFrame.offsetBy(dx: width - sliderSize, dy: 0)
-        } else if let startPosition = getSliderPosition(startValue), let endPosition = getSliderPosition(endValue) {
+        if let startValue = loopStart, endValue = loopEnd {
+            guard let startPosition = getSliderPosition(startValue), let endPosition = getSliderPosition(endValue) else {
+                return
+            }
+
             let basePreviousNextFrame = CGRect(x: 0, y: jumplistSize, width: 1.5 * sliderSize, height: sliderSize)
             previousButton.frame = basePreviousNextFrame.offsetBy(dx: startPosition, dy: 0)
             nextButton.frame = basePreviousNextFrame.offsetBy(dx: endPosition + 1.5 * sliderSize, dy: 0)
+        } else {
+            let basePreviousNextFrame = CGRect(x: 0, y: jumplistSize, width: sliderSize, height: sliderSize)
+            previousButton.frame = basePreviousNextFrame
+            nextButton.frame = basePreviousNextFrame.offsetBy(dx: width - sliderSize, dy: 0)
         }
+
         playPauseButton.frame = CGRect(
             x: previousButton.frame.maxX,
             y: jumplistSize,
@@ -242,7 +250,15 @@ class PlaySlider: UIControl {
             height: sliderSize
         )
 
-        drawComponents(timeValue: timeValue, startValue: startValue, endValue: endValue)
+        drawPreviousNextButtons()
+
+        if let startValue = loopStart, endValue = loopEnd {
+            drawSlider(sliderPosition: nil, startValue: startValue, endValue: endValue)
+        } else if let sliderPosition = getSliderPosition(currentTime) {
+            drawSlider(sliderPosition: sliderPosition, startValue: nil, endValue: nil)
+        } else {
+            playPauseButton.path = nil
+        }
     }
 
     func layoutLabel(label: UILabel, value: Double?) {
@@ -265,29 +281,26 @@ class PlaySlider: UIControl {
         totalDurationLabel.textColor = color
     }
 
-    private func drawComponents(timeValue timeValue: Double, startValue: Double, endValue: Double) {
-        let playPausePath = UIBezierPath()
-        if let sliderPosition = getSliderPosition(timeValue) {
-            drawSlider(playPausePath, sliderPosition: sliderPosition, startValue: startValue, endValue: endValue)
-        }
-        playPauseButton.path = playPausePath.CGPath
+    private func drawPreviousNextButtons() {
+        let hasLoop = loop != nil
 
-        let previousNextRect = editing
-            ? CGRect(x: 0, y: 0, width: sliderSize * 1.5, height: sliderSize)
-            : CGRect(x: 0, y: 0, width: sliderSize, height: sliderSize)
+        let previousNextRect = CGRect(
+            x: 0,
+            y: 0,
+            width: previousButton.frame.width,
+            height: previousButton.frame.height
+        )
 
         let previousPath = UIBezierPath()
-        if editing {
+        let nextPath = UIBezierPath()
+
+        if hasLoop {
             previousPath.drawRightArrow(previousNextRect)
+            nextPath.drawLeftArrow(previousNextRect)
         } else {
             previousPath.drawCircleWithinRect(previousNextRect)
             previousPath.drawPreviousButton(previousNextRect)
-        }
 
-        let nextPath = UIBezierPath()
-        if editing {
-            nextPath.drawLeftArrow(previousNextRect)
-        } else {
             nextPath.drawCircleWithinRect(previousNextRect)
             nextPath.drawNextButton(previousNextRect)
         }
@@ -296,12 +309,17 @@ class PlaySlider: UIControl {
         nextButton.path = nextPath.CGPath
     }
 
-    private func drawSlider(ctx: UIBezierPath, sliderPosition: CGFloat, startValue: Double, endValue: Double) {
+    private func drawSlider(sliderPosition sliderPosition: CGFloat?, startValue: Double?, endValue: Double?) {
+        let playPausePath = UIBezierPath()
+
         let sliderY = playPauseButton.frame.midY - jumplistSize
         let sliderWidth = playPauseButton.frame.width
         let offset = playPauseButton.frame.minX - sliderSize
 
-        let playPauseButtonFrame = CGRect(x: sliderPosition - offset, y: 0, width: sliderSize, height: sliderSize)
+        var playPauseButtonFrame: CGRect?
+        if let currentSliderPosition = sliderPosition {
+            playPauseButtonFrame = CGRect(x: currentSliderPosition - offset, y: 0, width: sliderSize, height: sliderSize)
+        }
 
         jumplistItems.forEach {
             jumplistItem in
@@ -309,7 +327,7 @@ class PlaySlider: UIControl {
                 return
             }
 
-            if editing && (time < startValue || time > endValue) {
+            if time < startValue || time > endValue {
                 return
             }
 
@@ -317,26 +335,28 @@ class PlaySlider: UIControl {
             let centrePoint = CGPoint(x: x, y: sliderY)
             var y = sliderY
 
-            if !editing && playPauseButtonFrame.contains(centrePoint) {
+            if let frame = playPauseButtonFrame where frame.contains(centrePoint) {
                 let r = sliderSize / 2 - lineWidth / 2
-                let x = x - playPauseButtonFrame.midX
+                let x = x - frame.midX
                 let dy = abs(x) < r
                     ? sqrt(pow(r, 2) - pow(x, 2))
                     : 0
                 y -= dy
             }
 
-            ctx.drawLineBetween(x: x, y1: y, y2: y - jumplistSize)
+            playPausePath.drawLineBetween(x: x, y1: y, y2: y - jumplistSize)
         }
 
-        if !editing {
-            ctx.drawCircleWithinRect(playPauseButtonFrame)
-            ctx.drawPauseButton(playPauseButtonFrame)
-            ctx.drawLineBetween(x1: 0, x2: playPauseButtonFrame.minX, y: sliderY)
-            ctx.drawLineBetween(x1: playPauseButtonFrame.maxX, x2: sliderWidth, y: sliderY)
+        if let frame = playPauseButtonFrame {
+            playPausePath.drawCircleWithinRect(frame)
+            playPausePath.drawPauseButton(frame)
+            playPausePath.drawLineBetween(x1: 0, x2: frame.minX, y: sliderY)
+            playPausePath.drawLineBetween(x1: frame.maxX, x2: sliderWidth, y: sliderY)
         } else {
-            ctx.drawLineBetween(x1: 0, x2: sliderWidth, y: sliderY)
+            playPausePath.drawLineBetween(x1: 0, x2: sliderWidth, y: sliderY)
         }
+
+        playPauseButton.path = playPausePath.CGPath
     }
 
     private func getSliderPosition(value: Double) -> CGFloat? {

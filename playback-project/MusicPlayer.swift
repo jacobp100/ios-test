@@ -34,6 +34,11 @@ protocol MusicPlayerFile: class {
     func stop()
 }
 
+struct Loop {
+    var start: Double
+    var end: Double
+}
+
 class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
     static let PLAYLIST_DID_CHANGE = "MUSIC_PLAYER_PLAYLIST_DID_CHANGE"

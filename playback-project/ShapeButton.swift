@@ -24,7 +24,7 @@ class ShapeButton: UIButton {
 
     var path: CGPath? {
         didSet {
-            shapeLayer.path = path!
+            shapeLayer.path = path
         }
     }
 

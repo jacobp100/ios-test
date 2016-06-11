@@ -515,10 +515,10 @@
                                                         </constraints>
                                                         <variation key="default">
                                                             <mask key="constraints">
-                                                                <exclude reference="umO-R0-kpM"/>
+                                                                <exclude reference="620-4m-KSk"/>
                                                                 <exclude reference="8Cd-Zc-aIe"/>
                                                                 <exclude reference="rgC-ha-jt0"/>
-                                                                <exclude reference="620-4m-KSk"/>
+                                                                <exclude reference="umO-R0-kpM"/>
                                                             </mask>
                                                         </variation>
                                                     </view>
@@ -613,10 +613,10 @@
                                                         </constraints>
                                                         <variation key="default">
                                                             <mask key="constraints">
-                                                                <exclude reference="g2r-Y5-sIA"/>
+                                                                <exclude reference="DYY-Ok-We9"/>
                                                                 <exclude reference="LuH-Sp-HGa"/>
                                                                 <exclude reference="Pf6-3Y-a0o"/>
-                                                                <exclude reference="DYY-Ok-We9"/>
+                                                                <exclude reference="g2r-Y5-sIA"/>
                                                             </mask>
                                                         </variation>
                                                     </view>

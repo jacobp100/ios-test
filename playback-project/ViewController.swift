@@ -115,14 +115,15 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
                 let currentTime = playbackSlider.time
                 let start = min(currentTime, duration - 30)
                 let end = min(currentTime + 30, duration)
-                playbackSlider.start = start
-                playbackSlider.end = end
+                playbackSlider.loop = Loop(start: start, end: end)
             }
             loopViewController.musicPlayer = musicPlayer
             isLooping = true
         }
 
-        playbackSlider.editing = isLooping
+        if !isLooping {
+            playbackSlider.loop = nil
+        }
     }
 
     func playSliderDidTogglePlaying(playSlider: PlaySlider) {
@@ -136,6 +137,10 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
     func playSliderValueDidChange(playSlider: PlaySlider, value: Double) {
         playbackSlider.time = value // Stop jumping back whilst loading
         musicPlayer.play(value)
+    }
+
+    func playSliderLoopDidChange(playSlider: PlaySlider, loop: Loop) {
+        playbackSlider.loop = loop
     }
 
     func handleMediaItemUpdates() {
