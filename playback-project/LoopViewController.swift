@@ -32,6 +32,16 @@ class LoopViewController: UIViewController {
             scrollView.layoutMargins.bottom
     }
 
+    @IBAction func loopSwitchDidToggle(sender: UISwitch) {
+        if !sender.on {
+            // Set loop to nil
+        } else if let currentItem = musicPlayer?.currentItem, let duration = currentItem.duration {
+            let currentTime = currentItem.time
+            let start = min(currentTime, duration - 30)
+            let end = min(currentTime + 30, duration)
+            let loop = Loop(start: start, end: end)
+        }
+    }
     /*
     // MARK: - Navigation
 

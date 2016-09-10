@@ -253,11 +253,14 @@ class PlaySlider: UIControl {
         drawPreviousNextButtons()
 
         if let startValue = loopStart, endValue = loopEnd {
+            // Line with some jump list items
             drawSlider(sliderPosition: nil, startValue: startValue, endValue: endValue)
         } else if let sliderPosition = getSliderPosition(currentTime) {
+            // Line with play pause button and all jump list items
             drawSlider(sliderPosition: sliderPosition, startValue: nil, endValue: nil)
         } else {
-            playPauseButton.path = nil
+            // Line with all jump list items
+            drawSlider(sliderPosition: nil, startValue: nil, endValue: nil)
         }
     }
 

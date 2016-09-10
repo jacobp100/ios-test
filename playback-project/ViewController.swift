@@ -47,7 +47,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
         addEventListeners(
             selector: #selector(ViewController.handleMediaItemUpdates),
-            events: [MusicPlayer.ITEM_DID_LOAD, MusicPlayer.ITEM_DID_CHANGE],
+            events: [MusicPlayer.ITEM_DID_LOAD, MusicPlayer.ITEM_DID_CHANGE, MusicPlayer.LOOP_DID_CHANGE],
             object: musicPlayer
         )
         addEventListeners(
@@ -111,12 +111,6 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
             jumpListTableViewController.musicPlayer = musicPlayer
             jumpListTableViewController.managedObjectContext = managedObjectContext
         } else if let loopViewController = viewController as? LoopViewController {
-            if let duration = musicPlayer.currentItem?.duration {
-                let currentTime = playbackSlider.time
-                let start = min(currentTime, duration - 30)
-                let end = min(currentTime + 30, duration)
-                playbackSlider.loop = Loop(start: start, end: end)
-            }
             loopViewController.musicPlayer = musicPlayer
             isLooping = true
         }
@@ -141,6 +135,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
     func playSliderLoopDidChange(playSlider: PlaySlider, loop: Loop) {
         playbackSlider.loop = loop
+        musicPlayer.currentItem?.loop(loop)
     }
 
     func handleMediaItemUpdates() {
@@ -153,6 +148,7 @@ class ViewController: UIViewController, PlaySliderDelegate, UITabBarControllerDe
 
             self.songLabel.text = currentItem.title
             self.playbackSlider.duration = currentItem.duration
+            self.playbackSlider.loop = self.musicPlayer.loop
 
             if let jumplistItems = currentItem.model?.jumplistItems {
                 self.playbackSlider.jumplistItems = Array(jumplistItems)

@@ -435,6 +435,9 @@
                                                     <constraint firstAttribute="height" constant="31" id="fwO-s9-uqs"/>
                                                 </constraints>
                                                 <color key="onTintColor" red="0.85490196080000003" green="0.92549019610000005" blue="0.3411764706" alpha="1" colorSpace="calibratedRGB"/>
+                                                <connections>
+                                                    <action selector="loopSwitchDidToggle:" destination="S1g-xP-9dm" eventType="valueChanged" id="rjN-2Z-5gk"/>
+                                                </connections>
                                             </switch>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loop current song" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MgL-aJ-v6G">
                                                 <rect key="frame" x="16" y="13" width="140" height="21"/>
@@ -751,6 +754,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="480"/>
                     <connections>
+                        <outlet property="loopToggle" destination="7Ic-h4-RnJ" id="vHy-Ko-BmC"/>
                         <outlet property="scrollView" destination="crk-hA-69u" id="YWC-cp-ebw"/>
                         <outlet property="stackView" destination="Rrv-fG-kCy" id="9Xg-ik-0x4"/>
                     </connections>

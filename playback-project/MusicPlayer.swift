@@ -15,6 +15,7 @@ protocol MusicPlayerFileDelegate {
     func musicPlayerFileDidLoad(sender: MusicPlayerFile)
     func musicPlayerFileDidError(sender: MusicPlayerFile)
     func musicPlayerFileDidFinish(sender: MusicPlayerFile)
+    func musicPlayerFileDidCompleteLoop(sender: MusicPlayerFile)
 }
 
 protocol MusicPlayerFile: class {
@@ -32,6 +33,7 @@ protocol MusicPlayerFile: class {
     func play(time: Double?)
     func pause()
     func stop()
+    func loop(loop: Loop)
 }
 
 struct Loop {
@@ -46,6 +48,7 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     static let ITEM_DID_LOAD = "MUSIC_PLAYER_ITEM_DID_LOAD"
     static let PITCH_DID_CHANGE = "MUSIC_PLAYER_PITCH_DID_CHANGE"
     static let TEMPO_DID_CHANGE = "MUSIC_PLAYER_TEMPO_DID_CHANGE"
+    static let LOOP_DID_CHANGE = "MUSIC_PLAYER_LOOP_DID_CHANGE"
 
     var playlist: [MusicPlayerFile] = [] {
         didSet {
@@ -67,6 +70,7 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
             currentItem?.tempo = realTempoForTempo(tempo)
         }
     }
+    var loop: Loop? = nil
 
     var currentItem: MusicPlayerFile? {
         get {
@@ -79,9 +83,15 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext // FIXME
 
+    private enum SeekItemAction {
+        case Play
+        case Loop
+    }
     private struct SeekItem {
         var item: MusicPlayerFile
+        var action: SeekItemAction
         var time: Double?
+        var loop: Loop?
     }
     private var seekItem: SeekItem?
 
@@ -133,7 +143,31 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
             return
         }
 
-        seekItem = SeekItem(item: item, time: time)
+        seekItem = SeekItem(item: item, action: .Play, time: time, loop: nil)
+
+        if item.delegate as? MusicPlayer !== self {
+            loadItem(item)
+            item.enque()
+        }
+    }
+
+    func loop(loop: Loop) {
+        if currentIndex < 0 {
+            currentIndex = 0
+        }
+
+        guard let item = currentItem else {
+            return
+        }
+
+        if item.loaded {
+            seekItem = nil
+            item.loop(loop)
+            playing = true
+            return
+        }
+
+        seekItem = SeekItem(item: item, action: .Loop, time: nil, loop: loop)
 
         if item.delegate as? MusicPlayer !== self {
             loadItem(item)
@@ -175,10 +209,18 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
     }
 
     func musicPlayerFileDidLoad(sender: MusicPlayerFile) {
-        if let currentSeekItem = seekItem where currentSeekItem.item === sender {
-            emitEvent(MusicPlayer.ITEM_DID_LOAD)
-            play(currentSeekItem.time)
+        guard let currentSeekItem = seekItem where currentSeekItem.item === sender else {
+            return
         }
+
+        switch currentSeekItem.action {
+        case .Play:
+            play(currentSeekItem.time)
+        case .Loop:
+            loop(currentSeekItem.loop!)
+        }
+
+        emitEvent(MusicPlayer.ITEM_DID_LOAD)
     }
 
     func musicPlayerFileDidError(sender: MusicPlayerFile) {
@@ -187,6 +229,10 @@ class MusicPlayer: NSObject, MusicPlayerFileDelegate {
 
     func musicPlayerFileDidFinish(sender: MusicPlayerFile) {
         playNext()
+    }
+
+    func musicPlayerFileDidCompleteLoop(sender: MusicPlayerFile) {
+        // okay
     }
 
     private func updatePlaylist() {

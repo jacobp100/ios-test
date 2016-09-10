@@ -44,6 +44,7 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
     var pitch: Float = 0 { didSet { timePitchNode.pitch = pitch } }
     var tempo: Float = 1 { didSet { timePitchNode.rate = tempo } }
 
+    private var loop: Loop?
     private var audioFile: AVAudioFile?
     private var audioPlayerPlayingSegmentIndex: Int = 0
     private var audioPlayerPlayingSegment = false
@@ -99,33 +100,57 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
             seekTime = 0
         }
 
-        pauseTime = nil
-
-        if seekTime < currentFile.duration {
-            seekingTimeOffset = seekTime
-
-            let startingFrame = currentFile.sampleRate * seekTime
-
-            audioPlayerNode.scheduleSegment(
-                currentFile,
-                startingFrame: AVAudioFramePosition(startingFrame),
-                frameCount: AVAudioFrameCount(currentFile.frames - startingFrame),
-                atTime: nil,
-                completionHandler: {
-                    [weak weakSelf = self] () -> Void in
-                    if let this = weakSelf where this.audioPlayerPlayingSegmentIndex == currentPlayingIndex {
-                        this.seekingTimeOffset = this.duration
-                        this.audioPlayerPlayingSegment = false
-                        this.audioEngine.stop()
-                        this.delegate?.musicPlayerFileDidFinish(this)
-                    }
-                }
-            )
-            audioPlayerNode.play()
-            audioPlayerPlayingSegment = true // Combine with playing?
-        } else {
-            delegate?.musicPlayerFileDidFinish(self)
+        if let currentLoop = loop {
+            if seekTime >= currentLoop.end {
+                delegate?.musicPlayerFileDidCompleteLoop(self)
+                seekTime = currentLoop.start
+            } else {
+                seekTime = max(seekTime, currentLoop.start)
+            }
         }
+
+        pauseTime = nil
+        seekingTimeOffset = seekTime
+
+        let startingFrame = currentFile.sampleRate * seekTime
+
+        var endingFrame: Double
+        if let currentLoop = loop {
+            endingFrame = currentFile.sampleRate * currentLoop.end
+        } else {
+            endingFrame = currentFile.frames
+        }
+
+        guard startingFrame < endingFrame else {
+            delegate?.musicPlayerFileDidFinish(self)
+            return
+        }
+
+        audioPlayerPlayingSegment = true // Combine with playing?
+        audioPlayerNode.scheduleSegment(
+            currentFile,
+            startingFrame: AVAudioFramePosition(startingFrame),
+            frameCount: AVAudioFrameCount(endingFrame - startingFrame),
+            atTime: nil,
+            completionHandler: {
+                [weak weakSelf = self] () -> Void in
+                guard let this = weakSelf where this.audioPlayerPlayingSegmentIndex == currentPlayingIndex else {
+                    return
+                }
+
+                this.audioPlayerPlayingSegment = false
+
+                if this.loop != nil {
+                    this.play(nil)
+                    this.delegate?.musicPlayerFileDidCompleteLoop(this)
+                } else {
+                    this.audioEngine.stop()
+                    this.seekingTimeOffset = this.duration
+                    this.delegate?.musicPlayerFileDidFinish(this)
+                }
+            }
+        )
+        audioPlayerNode.play()
     }
 
     func pause() {
@@ -137,6 +162,12 @@ class MusicPlayerAudioFile: NSObject, MusicPlayerFile {
     func stop() {
         pauseTime = nil
         stopPause()
+    }
+
+    func loop(loop: Loop) {
+        stop()
+        self.loop = loop
+        play(nil)
     }
 
     private func stopPause() {
